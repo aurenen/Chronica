@@ -5,6 +5,7 @@ A simple blog-like script, meant to categorize my site updates.
 * /include/
     * admin.php
     * auth.php
+    * config.php
     * view.php
 * /install/
     * create.sql
@@ -15,7 +16,6 @@ A simple blog-like script, meant to categorize my site updates.
     * style.css
 * add.php
 * category.php
-* config.php
 * edit.php
 * index.php
 * login.php
