@@ -1,6 +1,6 @@
 <?php
 
-require_once '../config.php';
+require_once 'config.php';
 
 function db_connect() {
     $dsn = 'mysql:dbname=' . $db_name . ';host=' . $db_host;
