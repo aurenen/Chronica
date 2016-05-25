@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Connects to MySQL database through PDO
+ * @return PDO connection link
+ */
 function db_connect() {
     require_once 'config.php';
 
