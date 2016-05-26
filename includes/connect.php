@@ -17,7 +17,6 @@ function db_connect() {
         return $link;
     }
     catch (PDOException $ex) {
-        echo 'Connection failed: ' . $ex->getMessage();
-        echo $dsn;
+        return 'Connection failed: ' . $ex->getMessage();
     }
 }
