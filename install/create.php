@@ -1,7 +1,11 @@
 <?php
 require_once '../includes/connect.php';
+require_once '../includes/util.php';
 
 $db = db_connect();
+$done = true;
+$full_install_path = str_ireplace('install', '', realpath(__DIR__));
+$full_install_url = str_ireplace('install/create.php', '', curPageURL());
 
 /**
  * create tables
@@ -11,20 +15,34 @@ if ( isset($_POST['create_tables']) ) {
     $stmts = explode("--", $create);
 
     foreach ($stmts as $s) {
-        if (!$db->query($s)) {
-            $table_msg = '<div class="warning">There was an error running the query [' . $s . ']</div>';
+         try {
+            $db->query($s);
+         }
+         catch (Exception $ex) {
+            $table_msg = '<div class="warning">There was an error running the query [' . $s . '] with the exception:' . $ex->getMessage() . '</div>';
+            $done = false;
+            break;
         }
     }
 
-    $table_msg = '<div class="success">Tables successfully created.</div>';
+    if ($done)
+        $table_msg = '<div class="success">Tables successfully created.</div>';
 }
 
 /**
  * insert initial settings
  */
 if ( isset($_POST['install']) ) { 
-
+    $stmt = $db->prepare("INSERT INTO settings (set_key, set_value, description) 
+        VALUES ('username', :username, 'Your login username.'),
+        VALUES ('password', :password, 'Your login password.'),
+        VALUES ('email', :email, 'Your email.'),
+        VALUES ('full_path', :full_path, 'The full path in your server where this is installed.'),
+        VALUES ('full_url', :full_url, 'The full url where this is located.'),
+        VALUES ('timezone_offset', :timezone, 'Your UTF timezone offset.'),
+        VALUES ('site_name', :site_name, 'The title of your blog.');");
     // process post request, insert info, redirect to success page.
+    $stmt->bindParam(':username', trim($_POST['username']), PDO::PARAM_STR, 25);
 
 }
 
@@ -58,7 +76,7 @@ $db = null;
         Make sure you have filled out <strong>/includes/config.php</strong> with the correct database information before proceeding.
         </p>
         <p>
-        When you install, click the submit button only once.
+        When you install, click the submit button only once. 
         </p>
 
         <form action="create.php" method="post">
@@ -73,7 +91,11 @@ $db = null;
             <input type="submit" name="create_tables" value="Create Tables &rarr;">
         </div>
             
-        <?php else: echo $table_msg; ?>
+        <?php 
+        //elseif ( !$done && isset($_POST['create_tables']) ): echo $table_msg;
+
+        else: echo $table_msg; 
+        ?>
 
         <h3>Admin Settings</h3>
         <p>
@@ -93,15 +115,15 @@ $db = null;
         </div>
         <div class="form-row">
             <label>Install full path</label>
-            <input type="text" name="full_path" value="" placeholder="Full server path">
+            <input type="text" name="full_path" value="<?php echo $full_install_path; ?>" placeholder="Full server path">
         </div>
         <div class="form-row">
             <label>Full URL</label>
-            <input type="text" name="full_url" value="" placeholder="Full URL">
+            <input type="text" name="full_url" value="<?php echo $full_install_url; ?>" placeholder="Full URL">
         </div>
         <div class="form-row">
             <label>Timezone offset</label>
-            <input type="text" name="timezone" value="" placeholder="Offset number">
+            <input type="text" name="timezone" value="0" placeholder="Offset number">
         </div>
         <div class="form-row">
             <label>Site name</label>
