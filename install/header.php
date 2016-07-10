@@ -40,6 +40,6 @@ function is_current($title) {
         <h3>Navigation</h3>
         <a href="index.php"><?php is_current("index"); ?>Start</a>
         <a href="create.php"><?php is_current("create"); ?>Install</a>
-        <a href="upgrade.php"><?php is_current("upgrade"); ?>Upgrade</a>
+        <a href="../index.php"><?php is_current("success"); ?>Return to main</a>
     </div>
     <div id="content">
