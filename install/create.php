@@ -1,15 +1,37 @@
 <?php
+/************************************************************
+ *
+ *  (c) Chronica
+ *  https://github.com/aurenen/chronica
+ *  
+ *  install/create.php
+ *  
+ *  The initial set up for a fresh install of Chronica.
+ *  Creates the MySQL tables and fills it with starter
+ *  settings, and username and password for admin login.
+ * 
+ ************************************************************/
+
 require_once '../includes/connect.php';
 require_once '../includes/util.php';
+require_once '../includes/PasswordHash.php';
 
 $db = db_connect();
 $done = true;
+$page = $_GET['tables'];
 $full_install_path = str_ireplace('install', '', realpath(__DIR__));
 $full_install_url = str_ireplace('install/create.php', '', curPageURL());
 
-/**
- * create tables
- */
+// check if installer has already been used
+/*$exist = $db->query('SELECT COUNT(*) FROM settings')->fetchColumn();
+
+if (intval($exist) > 0) {
+    $done = false;
+    header('Location: index.php');
+    exit();
+}*/
+
+// create tables
 if ( isset($_POST['create_tables']) ) { 
     $create = file_get_contents("create.sql");
     $stmts = explode("--", $create);
@@ -19,58 +41,86 @@ if ( isset($_POST['create_tables']) ) {
             $db->query($s);
          }
          catch (Exception $ex) {
-            $table_msg = '<div class="warning">There was an error running the query [' . $s . '] with the exception:' . $ex->getMessage() . '</div>';
+            $table_msg = '<div class="warning">There was an error running the query [' . 
+                        $s . '] with the exception:' . $ex->getMessage() . '</div>';
             $done = false;
             break;
         }
     }
 
-    if ($done)
-        $table_msg = '<div class="success">Tables successfully created.</div>';
+    if ($done) {
+        header('Location: create.php?tables=success');
+        exit();
+    }
 }
 
-/**
- * insert initial settings
- */
-if ( isset($_POST['install']) ) { 
-    $stmt = $db->prepare("INSERT INTO settings (set_key, set_value, description) 
-        VALUES ('username', :username, 'Your login username.'),
-        VALUES ('password', :password, 'Your login password.'),
-        VALUES ('email', :email, 'Your email.'),
-        VALUES ('full_path', :full_path, 'The full path in your server where this is installed.'),
-        VALUES ('full_url', :full_url, 'The full url where this is located.'),
-        VALUES ('timezone_offset', :timezone, 'Your UTF timezone offset.'),
-        VALUES ('site_name', :site_name, 'The title of your blog.');");
-    // process post request, insert info, redirect to success page.
-    $stmt->bindParam(':username', trim($_POST['username']), PDO::PARAM_STR, 25);
+// insert initial settings
+if ( (isset($_GET['tables']) && $_GET['tables'] === 'success') || isset($_POST['install']) ) { 
+    if (strlen( $_POST['password'] ) > 72) {
+        $setting_msg = '<div class="warning">Password length must not exceed 72 characters.</div>';
+        $done = false;
+    }
+    if (!is_numeric($_POST['timezone'])) {
+        $setting_msg = '<div class="warning">Please use a valid timezone offset number.</div>';
+        $done = false;
+    }
 
+    // no issues, continue
+    if ($done && !isset($_GET['install'])) {
+
+        // hash password before inserting into db
+        $hasher = new PasswordHash(8, FALSE);
+        $hash = $hasher->HashPassword( $_POST['password'] );
+        if (strlen($hash) < 20)
+            fail('Failed to hash new password');
+        unset($hasher);
+
+        $stmt = $db->prepare("INSERT INTO `settings` (`set_key`, `set_value`, `description`) VALUES 
+            ('username', :username, 'Your login username.'),
+            ('password', :password, 'Your login password.'),
+            ('email', :email, 'Your email.'),
+            ('full_path', :full_path, 'The full path in your server where this is installed.'),
+            ('full_url', :full_url, 'The full url where this is located.'),
+            ('timezone_offset', :timezone, 'Your UTF timezone offset.'),
+            ('site_name', :site_name, 'The title of your blog.');");
+
+        try {
+            // process post request, insert info, redirect to success page.
+            $stmt->bindParam(':username', trim($_POST['username']), PDO::PARAM_STR, 25);
+            $stmt->bindParam(':password', $hash, PDO::PARAM_STR, 250);
+            $stmt->bindParam(':email', trim($_POST['email']), PDO::PARAM_STR, 100);
+            $stmt->bindParam(':full_path', trim($_POST['full_path']), PDO::PARAM_STR, 250);
+            $stmt->bindParam(':full_url', trim($_POST['full_url']), PDO::PARAM_STR, 250);
+            $stmt->bindParam(':timezone', trim($_POST['timezone']), PDO::PARAM_STR, 2);
+            $stmt->bindParam(':site_name', trim($_POST['site_name']), PDO::PARAM_STR, 250);
+
+            $stmt->execute();
+        }
+        catch (Exception $ex) {
+            $setting_msg = '<div class="warning">ERROR: failed to insert settings. ' . 
+                        $ex->getMessage() . '</div>';
+            $done = false;
+        }
+        if ($done) {
+            header('Location: success.php');
+            exit();
+        }
+
+    } // end if $done
+} // end settings
+
+// toggle which messages to display
+if (isset($_GET['tables']) && $_GET['tables'] === 'success') {
+    $table_msg = '<div class="success">Tables successfully created.</div>';
+}
+if (isset($_GET['install']) && $_GET['install'] === 'exists') {
+    $setting_msg = '<div class="warning">Settings already installed. Installation complete.</div>';
 }
 
 // kill connection
 $db = null;
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-    <title>Chronica Installation</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../css/normalize.css" rel="stylesheet">
-    <link href="../css/style.css" rel="stylesheet">
-</head>
-<body>
-<h1 class="title center">Chronica Installation</h1>
-<div id="wrap">
-    <div id="nav">
-        <h3>Navigation</h3>
-        <a href="index.php">Start</a>
-        <a href="create.php">&rarr; Install</a>
-        <a href="upgrade.php">Upgrade</a>
-    </div>
-    <div id="content">
+<?php include_once 'header.php'; ?>
         <h2>New Install</h2>
         <p>
         Make sure you have filled out <strong>/includes/config.php</strong> with the correct database information before proceeding.
@@ -81,7 +131,7 @@ $db = null;
 
         <form action="create.php" method="post">
 
-        <?php if ( !isset($_POST['create_tables']) ): ?>
+        <?php if ( !isset($_GET['tables']) && !isset($_POST['install']) ): ?>
 
         <h3>Create Database Tables</h3>
         <p>
@@ -101,6 +151,9 @@ $db = null;
         <p>
         Use the browser's back and forward nagivation with caution, and please avoid reloading after you submit any forms. 
         </p>
+
+        <?php echo $setting_msg; ?>
+
         <div class="form-row">
             <label>Username</label>
             <input type="text" name="username" value="" placeholder="Your login name">
@@ -136,10 +189,5 @@ $db = null;
         <?php endif ?>
 
         </form>
-    </div>
-</div>
-<div id="footer">
-    <p>&copy; Chronica 2016.</p>
-</div>
-</body>
-</html>
+
+<?php include_once 'footer.php'; ?>
