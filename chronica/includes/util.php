@@ -1,8 +1,14 @@
 <?php
-/**
- *  General useful functions to keep it DRY
- */
-
+/************************************************************
+ *
+ *  (c) Chronica
+ *  https://github.com/aurenen/chronica
+ *  
+ *  includes/util.php
+ *  
+ *  Useful general functions to keep things DRY.
+ * 
+ ************************************************************/
 
 // http://webcheatsheet.com/php/get_current_page_url.php
 function curPageURL() {
