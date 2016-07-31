@@ -23,13 +23,13 @@ $full_install_path = str_ireplace('install', '', realpath(__DIR__));
 $full_install_url = str_ireplace('install/create.php', '', curPageURL());
 
 // check if installer has already been used
-/*$exist = $db->query('SELECT COUNT(*) FROM settings')->fetchColumn();
+$exist = $db->query('SELECT COUNT(*) FROM settings')->fetchColumn();
 
 if (intval($exist) > 0) {
     $done = false;
-    header('Location: index.php');
+    header('Location: ../index.php');
     exit();
-}*/
+}
 
 // create tables
 if ( isset($_POST['create_tables']) ) { 
