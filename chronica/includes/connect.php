@@ -1,4 +1,15 @@
 <?php
+/************************************************************
+ *
+ *  (c) Chronica
+ *  https://github.com/aurenen/chronica
+ *  
+ *  includes/connect.php
+ *  
+ *  Handles all database connections.
+ * 
+ ************************************************************/
+
 /**
  * Connects to MySQL database through PDO
  * @return PDO connection link
