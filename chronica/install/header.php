@@ -38,7 +38,7 @@ function is_current($title) {
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../css/normalize.css" rel="stylesheet">
-    <link href="../css/install.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
 </head>
 <body>
 <h1 class="title center">Chronica Installation</h1>
