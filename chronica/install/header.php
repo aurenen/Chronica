@@ -1,4 +1,11 @@
 <?php
+/**
+ * Check if page is current url for navigation
+ * http://blog.aurenen.org/2015/11/php-dynamic-navigationpage-title/
+ * 
+ * @param  string $title : filename without extension
+ * @return boolean 
+ */
 function is_current($title) {
     $url = $_SERVER['REQUEST_URI'];
 
