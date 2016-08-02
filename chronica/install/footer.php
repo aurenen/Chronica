@@ -1,7 +1,7 @@
     </div>
 </div>
 <div id="footer">
-    <p>&copy; Chronica 2016.</p>
+    <p>&copy; <?php poweredBy('link'); ?> 2016.</p>
 </div>
 </body>
 </html>

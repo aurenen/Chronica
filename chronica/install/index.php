@@ -1,4 +1,7 @@
-<?php include_once 'header.php'; ?>
+<?php 
+require_once '../includes/util.php';
+include_once 'header.php'; 
+?>
 
         <h2>Introduction</h2>
         <p>
