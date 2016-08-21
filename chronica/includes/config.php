@@ -9,7 +9,10 @@
  * different setting
  ************************************************************************/
 
-$db_user = 'username';
-$db_pass = 'password';
+$db_user = 'masao';
+
+$db_pass = 'FenriS';
+
 $db_name = 'chronica';
+
 $db_host = 'localhost';
