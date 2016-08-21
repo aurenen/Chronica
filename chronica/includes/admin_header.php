@@ -11,15 +11,22 @@
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
-<h1 class="title center">Chronica Installation</h1>
 <div id="wrap">
     <div id="nav">
         <h3>Navigation</h3>
+        <?php if (isset($_SESSION['login'])): ?>
         <a href="dash.php"><?php is_current("dash"); ?>Dashboard</a>
         <a href="add.php"><?php is_current("add"); ?>Add Entry</a>
         <a href="edit.php"><?php is_current("edit"); ?>Edit Entry</a>
         <a href="category.php"><?php is_current("category"); ?>Categories</a>
-        <a href="setting.php"><?php is_current("setting"); ?>Setting</a>
+        <a href="setting.php"><?php is_current("setting"); ?>Settings</a>
+        <?php endif; ?>
+        <a href="index.php"><?php is_current("index"); ?>View Published</a>
+
+        <?php if (!isset($_SESSION['login'])): ?>
         <a href="login.php"><?php is_current("login"); ?>Login</a>
+        <?php else: ?>
+        <a href="logout.php"><?php is_current("logout"); ?>Logout</a>
+        <?php endif; ?>
     </div>
     <div id="content">
