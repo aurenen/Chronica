@@ -103,7 +103,6 @@ body {
 .success {
     background-color: #c8e3bd;
     color: #3d6542;
-    width: 90%;
     margin: 1em 0;
     padding: .8em;
     border-radius: .28571429rem;
@@ -111,7 +110,6 @@ body {
 .warning {
     background-color: #e3c7bd;
     color: #6b4136;
-    width: 90%;
     margin: 1em 0;
     padding: .8em;
     border-radius: .28571429rem;
@@ -120,7 +118,6 @@ body {
 .dash {
     background-color: #ddd;
     margin: 1em 0;
-    width: 90%;
     padding: .8em;
     border-radius: .28571429rem;
 }
@@ -139,11 +136,11 @@ label {
 }
 input {
     display: inline-block;
-    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+    font-family: sans-serif;
     margin: 0;
     outline: 0;
     line-height: 1.2142em;
-    padding: .67861429em 1em;
+    padding: .67861429em .5em;
     font-size: 1em;
     background: #fff;
     border: 1px solid rgba(34,36,38,.2);
@@ -176,7 +173,7 @@ input[type="submit"]:hover {
     h1 { font-size: 3.5em; }
     h2 { font-size: 2.8em; }
     h3 { font-size: 1.8em; }
-    input { width: 100%; }
+    input,input[type="submit"]  { width: 100%; }
 }
 @media (max-width: 400px) {
     h1 { font-size: 2.8em; }
