@@ -43,5 +43,5 @@ require_once 'includes/admin_header.php';
         </form>
 
 <?php 
-require_once 'includes/admin_header.php'; 
+require_once 'includes/admin_footer.php'; 
 ?>

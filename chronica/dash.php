@@ -29,5 +29,5 @@ require_once 'includes/admin_header.php';
         <p>Logged in.</p>
 
 <?php 
-require_once 'includes/admin_header.php'; 
+require_once 'includes/admin_footer.php'; 
 ?>
