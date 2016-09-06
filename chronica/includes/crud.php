@@ -42,6 +42,8 @@ function addCategory($name, $permalink, $desc) {
 }
 
 function editCategory($id, $name, $permalink, $desc) {
+    if (!is_numeric($id))
+        return '<div class="warning">Invalid category ID.</div>';
     global $db;
     $query = "UPDATE `categories` 
               SET `name` = :name, `permalink` = :permalink, `description` = :description 
@@ -82,6 +84,8 @@ function getCategories() {
 }
 
 function getCategory($id) {
+    if (!is_numeric($id))
+        return null;
     global $db;
     $query = "SELECT * FROM `categories` WHERE `cat_id` = :id;";
     $stmt = $db->prepare($query);

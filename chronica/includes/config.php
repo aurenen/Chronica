@@ -9,7 +9,10 @@
  * different setting
  ************************************************************************/
 
+
 $db_user = 'username';
 $db_pass = 'password';
 $db_name = 'chronica';
 $db_host = 'localhost';
+
+date_default_timezone_set('America/Los_Angeles');
