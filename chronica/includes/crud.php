@@ -31,14 +31,14 @@ function addCategory($name, $permalink, $desc) {
 
         $stmt->execute();
 
-        $msg = '<div class="success">Category successfully added.</div>';
+        $status = true;
     }
     catch (Exception $ex) {
-        $msg = '<div class="warning">ERROR: failed to add category. ' . 
-                       $ex->getMessage() . '</div>';
+        error_log(date('Y-m-d') . ' ERROR: failed to add category. ' . $ex->getMessage());
+        $status = false;
     }
 
-    return $msg;
+    return $status;
 }
 
 function editCategory($id, $name, $permalink, $desc) {
@@ -57,14 +57,14 @@ function editCategory($id, $name, $permalink, $desc) {
 
         $stmt->execute();
 
-        $msg = '<div class="success">Category successfully updated.</div>';
+        $status = true;
     }
     catch (Exception $ex) {
-        $msg = '<div class="warning">ERROR: failed to edit category. ' . 
-                       $ex->getMessage() . '</div>';
+        error_log(date('Y-m-d') . ' ERROR: failed to edit category. ' . $ex->getMessage());
+        $status = false;
     }
 
-    return $msg;
+    return $status;
 }
 
 function getCategories() {
@@ -76,8 +76,8 @@ function getCategories() {
         $result = $stmt->fetchAll();
     }
     catch (Exception $ex) {
-        $result = '<div class="warning">ERROR: failed to load categories. ' . 
-                       $ex->getMessage() . '</div>';
+        error_log(date('Y-m-d') . ' div class="warning">ERROR: failed to load categories. ' . $ex->getMessage());
+        $result = null;
     }
 
     return $result;
@@ -95,9 +95,40 @@ function getCategory($id) {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
     }
     catch (Exception $ex) {
-        $result = '<div class="warning">ERROR: failed to load categories. ' . 
-                       $ex->getMessage() . '</div>';
+        error_log(date('Y-m-d') . ' div class="warning">ERROR: failed to load category. ' . $ex->getMessage());
+        $result = null;
     }
 
     return $result;
+}
+
+function addEntry($title, $desc, $added, $modified, $published, $entry) {
+    global $db;
+    $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
+              VALUES (:title, :description, :added, :modified, :published);";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':title', $title, PDO::PARAM_STR, 100);
+        $stmt->bindParam(':description', $desc, PDO::PARAM_STR, 200);
+        $stmt->bindParam(':added', $added, PDO::PARAM_STR);
+        $stmt->bindParam(':modified', $modified, PDO::PARAM_STR);
+        $stmt->bindParam(':published', $published, PDO::PARAM_BOOL);
+
+        $stmt->execute();
+
+        $entry_id = $db->lastInsertId();
+
+        $query2 = "INSERT INTO `entries` (`ent_id`, `body`) VALUES (:id, :entry);";
+        $stmt = $db->prepare($query2);
+        $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
+        $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
+
+        $status = true;
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to add entry. ' . $ex->getMessage());
+        $status = false;
+    }
+
+    return $status;
 }
