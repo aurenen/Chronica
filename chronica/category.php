@@ -25,14 +25,19 @@ if (!isset($_SESSION['login'])) {
 $cats = getCategories();
 
 $add = true;
+$added = false;
 if ( isset($_POST['add_cat']) ) {
+    $_SESSION['cat_name'] = htmlentities($_POST['cat_name']);
+    $_SESSION['cat_perma'] = htmlentities($_POST['cat_perma']);
+    $_SESSION['cat_desc'] = htmlentities($_POST['cat_desc']);
+
     $add_msg = '<div class="warning">';
-    if ( strlen($_POST['cat_name']) > 25 || preg_match('/[^A-Za-z0-9\.\&\!\s]+/', $_POST['cat_name']) === 1) {
-        $add_msg .= 'Category name must be less than 25 characters and contain no symbols. ';
+    if ( strlen($_POST['cat_name']) < 2 || strlen($_POST['cat_name']) > 25 || preg_match('/[^A-Za-z0-9\.\&\!\s]+/', $_POST['cat_name']) === 1) {
+        $add_msg .= 'Category name must be greater than 1 and less than 25 characters and contain no symbols. ';
         $add = false;
     }
-    if ( strlen($_POST['cat_perma']) > 25 || preg_match('/[^a-z0-9\-]+/', $_POST['cat_perma']) === 1) {
-        $add_msg .= 'Category permalink must be less than 25 characters, all lower case, and contain no symbols. ';
+    if ( strlen($_POST['cat_perma']) < 2 || strlen($_POST['cat_perma']) > 25 || preg_match('/[^a-z0-9\-]+/', $_POST['cat_perma']) === 1) {
+        $add_msg .= 'Category permalink must be greater than 1 and less than 25 characters, all lower case, and contain no symbols. ';
         $add = false;
     }
     if ( strlen($_POST['cat_desc']) > 200) {
@@ -42,7 +47,7 @@ if ( isset($_POST['add_cat']) ) {
     $add_msg .= '</div>';
 
     if ($add) {
-        $add_msg = addCategory($_POST['cat_name'], $_POST['cat_perma'], $_POST['cat_desc']);
+        $added = addCategory($_POST['cat_name'], $_POST['cat_perma'], $_POST['cat_desc']);
     }
 }
 
@@ -70,20 +75,29 @@ require_once 'includes/admin_header.php';
         </table>
 
         <h3>Add Category</h3>
-        <?php echo $add_msg; ?>
+        <?php echo $add_msg; 
+            if (isset($_POST['add_cat'])) {
+                if ($added) {
+                    echo '<div class="success">Category successfully added.</div>';
+                }
+                else {
+                    echo '<div class="warning">ERROR: failed to add category.</div>';
+                }
+            }
+        ?>
         <p>Category name should avoid symbols and category permalink is the unique slug for your category, example: http://update.com/category/<strong>permalink</strong>, it is NOT the entire url, just the unique part you want to use to link.</p>
         <form action="category.php" method="post">
             <div class="form-row">
                 <label>Name</label>
-                <input type="text" name="cat_name">
+                <input type="text" name="cat_name" value="<?php echo $_SESSION['cat_name']; ?>">
             </div>
             <div class="form-row">
                 <label>URL Permalink</label>
-                <input type="text" name="cat_perma">
+                <input type="text" name="cat_perma" value="<?php echo $_SESSION['cat_perma']; ?>">
             </div>
             <div class="form-row">
                 <label>Description</label>
-                <input type="text" name="cat_desc">
+                <input type="text" name="cat_desc" value="<?php echo $_SESSION['cat_desc']; ?>">
             </div>
             <div class="form-row">
                 <input type="submit" name="add_cat" value="Add">

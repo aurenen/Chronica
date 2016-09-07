@@ -40,7 +40,7 @@ if ( isset($_POST['edit_cat']) ) {
     }
 
     if ($edit) {
-        $edit_status = editCategory($_POST['cat_id'], $_POST['cat_name'], $_POST['cat_perma'], $_POST['cat_desc']);
+        $edit = editCategory($_POST['cat_id'], $_POST['cat_name'], $_POST['cat_perma'], $_POST['cat_desc']);
         header('Location: category.php');
     }
     else {
@@ -63,6 +63,12 @@ require_once 'includes/admin_header.php';
                 $edit_status .= 'Category description must be less than 200 characters. ';
             $edit_status .= '</div>';
             echo $edit_status;
+            if ($edit) {
+                echo '<div class="success">Category successfully updated.</div>';
+            }
+            else {
+                echo '<div class="warning">ERROR: failed to edit category.</div>';
+            }
         }
         ?>
         <p>Category name should avoid symbols and category permalink is the unique slug for your category, example: http://update.com/category/<strong>permalink</strong>, it is NOT the entire url, just the unique part you want to use to link.</p>
