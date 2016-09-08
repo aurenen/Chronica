@@ -27,8 +27,8 @@ $current_date = date('Y-m-d H:i:s');
 
 if (isset($_POST['publish'])) {
     $p_title = strip_tags($_POST['title']);
-    $p_date = is_int($_POST['added']) ? intval($_POST['added']) : 0;
-    $p_category = strip_tags($_POST['category']);
+    $p_date = strip_tags($_POST['added']);
+    $p_category = is_int($_POST['category']) ? intval($_POST['category']) : 0;
     $p_entry = strip_tags($_POST['entry']);
 
     $_SESSION['post_title'] = $p_title;
