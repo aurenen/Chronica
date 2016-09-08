@@ -118,6 +118,7 @@ function addEntry($title, $desc, $added, $modified, $published, $entry) {
 
         $entry_id = $db->lastInsertId();
 
+        // TODO: add converted html to database
         $query2 = "INSERT INTO `entries` (`ent_id`, `body`) VALUES (:id, :entry);";
         $stmt = $db->prepare($query2);
         $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
