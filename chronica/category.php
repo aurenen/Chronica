@@ -22,7 +22,10 @@ if (!isset($_SESSION['login'])) {
     exit();
 } 
 
-$cats = getCategories();
+$page = $_GET['page'];
+// check if int, continue
+$page_offset = intval($page) - 1;
+$entries = getEntriesMeta($page_offset, $count);
 $add_msg = '';
 $add = true;
 $added = false;

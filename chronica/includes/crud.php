@@ -125,7 +125,7 @@ function addEntry($title, $desc, $added, $modified, $published, $entry) {
         $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
 
         $stmt->execute();
-        
+
         $status = true;
     }
     catch (Exception $ex) {
@@ -134,4 +134,23 @@ function addEntry($title, $desc, $added, $modified, $published, $entry) {
     }
 
     return $status;
+}
+
+function getEntriesMeta($offset, $count) {
+    global $db;
+    $query = "SELECT `ent_id`, `title`, `description`, `added`, `modified`, `published` FROM `entry_meta LIMIT :offset, :count;";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':offset', $offset * 2, PDO::PARAM_INT);
+        $stmt->bindParam(':count', $count, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to get paginated entries. ' . $ex->getMessage());
+        $result = null;
+    }
+    
+    return $result;
 }
