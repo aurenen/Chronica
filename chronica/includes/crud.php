@@ -124,6 +124,8 @@ function addEntry($title, $desc, $added, $modified, $published, $entry) {
         $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
         $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
 
+        $stmt->execute();
+        
         $status = true;
     }
     catch (Exception $ex) {
