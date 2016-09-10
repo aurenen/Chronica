@@ -104,6 +104,7 @@ function getCategory($id) {
 
 function addEntry($title, $desc, $added, $modified, $published, $entry) {
     global $db;
+    include 'Parsedown.php';
     $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
               VALUES (:title, :description, :added, :modified, :published);";
     $stmt = $db->prepare($query);
@@ -118,11 +119,15 @@ function addEntry($title, $desc, $added, $modified, $published, $entry) {
 
         $entry_id = $db->lastInsertId();
 
-        // TODO: add converted html to database
-        $query2 = "INSERT INTO `entries` (`ent_id`, `body`) VALUES (:id, :entry);";
+        $query2 = "INSERT INTO `entries` (`ent_id`, `markdown`, `html`) VALUES (:id, :entry, :html);";
         $stmt = $db->prepare($query2);
         $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
         $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
+
+        $Parsedown = new Parsedown();
+        $html = $Parsedown->text('Hello _Parsedown_!');
+
+        $stmt->bindParam(':html', $html, PDO::PARAM_STR);
 
         $stmt->execute();
 
@@ -138,10 +143,11 @@ function addEntry($title, $desc, $added, $modified, $published, $entry) {
 
 function getEntriesMeta($offset, $count) {
     global $db;
+    $offset *= 2;
     $query = "SELECT `ent_id`, `title`, `description`, `added`, `modified`, `published` FROM `entry_meta LIMIT :offset, :count;";
     $stmt = $db->prepare($query);
     try {
-        $stmt->bindParam(':offset', $offset * 2, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stmt->bindParam(':count', $count, PDO::PARAM_INT);
 
         $stmt->execute();
