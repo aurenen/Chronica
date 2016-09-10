@@ -25,7 +25,7 @@ if (!isset($_SESSION['login'])) {
 $page = $_GET['page'];
 // check if int, continue
 $page_offset = intval($page) - 1;
-$entries = getEntriesMeta($page_offset, $count);
+$cats = getCategories();
 $add_msg = '';
 $add = true;
 $added = false;
