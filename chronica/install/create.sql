@@ -23,7 +23,8 @@ CREATE TABLE entry_meta (
 --
 CREATE TABLE entries (
     ent_id INT(10) UNSIGNED,
-    body TEXT
+    markdown TEXT,
+    html TEXT
 ) ENGINE=MyISAM;
 --
 CREATE TABLE category_has_entry (
