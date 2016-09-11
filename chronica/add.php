@@ -53,7 +53,7 @@ if (isset($_POST['publish'])) {
 
     // process post if no issues
     if ($add) {
-        $success = addEntry($p_title, substr($p_entry, 0, 200), $p_date, $p_date, true, $p_entry);
+        $success = addEntry($p_title, substr($p_entry, 0, 200), $p_date, $p_date, true, $p_category, $p_entry);
     }
 }
 
