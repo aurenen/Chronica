@@ -22,9 +22,6 @@ if (!isset($_SESSION['login'])) {
     exit();
 } 
 
-$page = $_GET['page'];
-// check if int, continue
-$page_offset = intval($page) - 1;
 $cats = getCategories();
 $add_msg = '';
 $add = true;
