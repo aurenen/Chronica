@@ -23,11 +23,22 @@ if (!isset($_SESSION['login'])) {
 } 
 
 $action = $_GET['action'] == "edit" ? "edit" : "list";
+$ent_id = is_numeric($_GET['id']) ? intval($_GET['id']) : 0;
 $page_offset = 0;
-
-$entries = getEntriesMeta($page_offset, 10);
 $entry_msg = '';
-$add = true;
+
+if ($action == "list") {
+    $entries = getEntriesMeta($page_offset, 10);
+}
+elseif ($action == "edit" && $ent_id == 0) {
+    $entry_msg .= '<div class="warning">Invalid entry id.</div>';
+}
+else {
+    $edit_entry = getEntryForEdit($ent_id);
+    $cats = getCategories();
+}
+
+$edit = true;
 $success = false;
 
 if (isset($_POST['publish'])) {
@@ -42,19 +53,19 @@ if (isset($_POST['publish'])) {
 
     if (strlen($p_title) > 100) {
         $entry_msg .= '<div class="warning">Entry title cannot be longer than 100 characters.</div>';
-        $add = false;
+        $edit = false;
     }
     if (date_create_from_format('Y-m-d H:i:s', $p_date) === false) {
         $entry_msg .= '<div class="warning">Please use the drop down to select a valid date and time.</div>';
-        $add = false;
+        $edit = false;
     }
     if ($p_category === 0) {
         $entry_msg .= '<div class="warning">Please select a category.</div>';
-        $add = false;
+        $edit = false;
     }
 
     // process post if no issues
-    if ($add) {
+    if ($edit) {
         $success = addEntry($p_title, substr($p_entry, 0, 200), $p_date, $p_date, true, $p_entry);
     }
 }
@@ -72,11 +83,11 @@ require_once 'includes/admin_header.php';
         <form action="edit.php" method="post">
             <div class="form-row">
                 <label>Title</label>
-                <input type="text" name="title" value="<?php echo $_SESSION['post_title']; ?>">
+                <input type="text" name="title" value="<?php echo $edit_entry['title']; ?>">
             </div>
             <div class="form-row">
                 <label>Date</label>
-                <input type="text" name="added" class="date" data-default-date="<?php echo $current_date; ?>" data-enable-time="true" data-enable-seconds="true">
+                <input type="text" name="added" class="date" data-default-date="<?php echo $edit_entry['added']; ?>" data-enable-time="true" data-enable-seconds="true">
             </div>
             <div class="form-row">
                 <label>Category</label>
@@ -84,7 +95,7 @@ require_once 'includes/admin_header.php';
                     <option></option>
                     <?php foreach ($cats as $c) {
                         echo '<option value="'.$c['cat_id'].'"';
-                        if ($_SESSION['post_cat'] == $c['cat_id']) 
+                        if ($edit_entry['cat_id'] == $c['cat_id']) 
                             echo ' selected';
                         echo '>'
                             .$c['name']
@@ -94,7 +105,7 @@ require_once 'includes/admin_header.php';
             </div>
             <div id="editor-wrap">
                 <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
-                <textarea id="md" name="entry"><?php echo $_SESSION['post_entry']; ?></textarea>
+                <textarea id="md" name="entry"><?php echo $edit_entry['markdown']; ?></textarea>
             <div class="form-row">
                 <input type="submit" name="publish" value="Publish">
                 <input type="submit" name="draft" value="Save Draft">
@@ -109,8 +120,8 @@ require_once 'includes/admin_header.php';
 
         <table>
             <tr>
-                <th>Date Added</th>
-                <th>Date Modified</th>
+                <th>Added</th>
+                <th>Modified</th>
                 <th>Title</th>
                 <th>Entry</th>
                 <th>Published</th>
