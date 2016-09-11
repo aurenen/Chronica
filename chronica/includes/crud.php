@@ -102,7 +102,7 @@ function getCategory($id) {
     return $result;
 }
 
-function addEntry($title, $desc, $added, $modified, $published, $entry) {
+function addEntry($title, $desc, $added, $modified, $published, $category, $entry) {
     global $db;
     include 'Parsedown.php';
     $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
@@ -119,10 +119,13 @@ function addEntry($title, $desc, $added, $modified, $published, $entry) {
 
         $entry_id = $db->lastInsertId();
 
-        $query2 = "INSERT INTO `entries` (`ent_id`, `markdown`, `html`) VALUES (:id, :entry, :html);";
+        $query2 = "INSERT INTO `entries` (`ent_id`, `markdown`, `html`) VALUES (:id, :entry, :html);
+                   INSERT INTO `category_has_entry` (`cat_id`, `ent_id`)
+                   VALUES (:category, :id);";
         $stmt = $db->prepare($query2);
         $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
         $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
+        $stmt->bindParam(':category', $category, PDO::PARAM_INT);
 
         $Parsedown = new Parsedown();
         $html = $Parsedown->text('Hello _Parsedown_!');
@@ -155,6 +158,30 @@ function getEntriesMeta($offset, $count) {
     }
     catch (Exception $ex) {
         error_log(date('Y-m-d') . ' ERROR: failed to get paginated entries. ' . $ex->getMessage());
+        $result = null;
+    }
+    
+    return $result;
+}
+
+function getEntryForEdit($id) {
+    global $db;
+    $query = "SELECT `entry_meta`.`ent_id`, `entry_meta`.`title`, `entry_meta`.`added`, 
+                `entry_meta`.`modified`, `entry_meta`.`published`, `entries`.`markdown`,
+                `categories`.`cat_id`, `categories`.`name` FROM `entry_meta`
+              JOIN `entries` ON `entry_meta`.`ent_id` = `entries`.`ent_id`
+              JOIN `category_has_entry` ON `category_has_entry`.`ent_id` = `entries`.`ent_id`
+              JOIN `categories` ON `categories`.`cat_id` = `category_has_entry`.`cat_id`
+              WHERE `entry_meta`.`ent_id` = :id";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to get entry for edit. ' . $ex->getMessage());
         $result = null;
     }
     
