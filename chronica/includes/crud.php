@@ -144,14 +144,14 @@ function addEntry($title, $desc, $added, $modified, $published, $entry) {
 function getEntriesMeta($offset, $count) {
     global $db;
     $offset *= 2;
-    $query = "SELECT `ent_id`, `title`, `description`, `added`, `modified`, `published` FROM `entry_meta LIMIT :offset, :count;";
+    $query = "SELECT `ent_id`, `title`, `description`, `added`, `modified`, `published` FROM `entry_meta` LIMIT :offset, :count;";
     $stmt = $db->prepare($query);
     try {
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stmt->bindParam(':count', $count, PDO::PARAM_INT);
 
         $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll();
     }
     catch (Exception $ex) {
         error_log(date('Y-m-d') . ' ERROR: failed to get paginated entries. ' . $ex->getMessage());
