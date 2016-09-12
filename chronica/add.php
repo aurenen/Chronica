@@ -13,7 +13,6 @@
 require_once 'includes/connect.php';
 require_once 'includes/util.php';
 require_once 'includes/crud.php';
-require_once 'includes/PasswordHash.php';
 
 session_start();
 

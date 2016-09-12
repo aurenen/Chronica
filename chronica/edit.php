@@ -13,7 +13,6 @@
 require_once 'includes/connect.php';
 require_once 'includes/util.php';
 require_once 'includes/crud.php';
-require_once 'includes/PasswordHash.php';
 
 session_start();
 
@@ -86,7 +85,6 @@ require_once 'includes/admin_header.php';
         <?php echo $entry_msg; 
             if ($success)
                 echo '<div class="success">Entry successfully edited.</div>';
-            print_r($ent_id);
         ?>
 
         <?php if ($action == "edit"): /* edit view */ ?>
