@@ -18,6 +18,7 @@
  */
 
 $db = db_connect();
+include_once 'Parsedown.php';
 
 function addCategory($name, $permalink, $desc) {
     global $db;
@@ -104,7 +105,6 @@ function getCategory($id) {
 
 function addEntry($title, $desc, $added, $modified, $published, $category, $entry) {
     global $db;
-    include 'Parsedown.php';
     $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
               VALUES (:title, :description, :added, :modified, :published);";
     $stmt = $db->prepare($query);
@@ -128,7 +128,7 @@ function addEntry($title, $desc, $added, $modified, $published, $category, $entr
         $stmt->bindParam(':category', $category, PDO::PARAM_INT);
 
         $Parsedown = new Parsedown();
-        $html = $Parsedown->text('Hello _Parsedown_!');
+        $html = $Parsedown->text($entry);
 
         $stmt->bindParam(':html', $html, PDO::PARAM_STR);
 
@@ -186,4 +186,39 @@ function getEntryForEdit($id) {
     }
     
     return $result;
+}
+
+function editEntry($id, $title, $desc, $added, $modified, $published, $category, $entry) {
+    global $db;
+    $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
+              VALUES (:title, :description, :added, :modified, :published);
+              INSERT INTO `entries` (`ent_id`, `markdown`, `html`) VALUES (:id, :entry, :html);
+              INSERT INTO `category_has_entry` (`cat_id`, `ent_id`)
+              VALUES (:category, :id);";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
+        $stmt->bindParam(':title', $title, PDO::PARAM_STR, 100);
+        $stmt->bindParam(':description', $desc, PDO::PARAM_STR, 200);
+        $stmt->bindParam(':added', $added, PDO::PARAM_STR);
+        $stmt->bindParam(':modified', $modified, PDO::PARAM_STR);
+        $stmt->bindParam(':published', $published, PDO::PARAM_BOOL);
+        $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
+        $stmt->bindParam(':category', $category, PDO::PARAM_INT);
+
+        $Parsedown = new Parsedown();
+        $html = $Parsedown->text($entry);
+
+        $stmt->bindParam(':html', $html, PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        $status = true;
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to edit entry. ' . $ex->getMessage());
+        $status = false;
+    }
+
+    return $status;
 }
