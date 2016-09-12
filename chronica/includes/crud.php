@@ -190,14 +190,16 @@ function getEntryForEdit($id) {
 
 function editEntry($id, $title, $desc, $added, $modified, $published, $category, $entry) {
     global $db;
-    $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
-              VALUES (:title, :description, :added, :modified, :published);
-              INSERT INTO `entries` (`ent_id`, `markdown`, `html`) VALUES (:id, :entry, :html);
-              INSERT INTO `category_has_entry` (`cat_id`, `ent_id`)
-              VALUES (:category, :id);";
+    $query = "UPDATE `entry_meta` SET `title` = :title, `description` = :description, `added` = :added, 
+                `modified` = :modified, `published` = :published 
+              WHERE `ent_id` = :id;
+              UPDATE `entries` SET `markdown` = :entry, `html` = :html
+              WHERE `ent_id` = :id;
+              UPDATE `category_has_entry` SET `cat_id` = :category
+              WHERE `ent_id` = :id;";
     $stmt = $db->prepare($query);
     try {
-        $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':title', $title, PDO::PARAM_STR, 100);
         $stmt->bindParam(':description', $desc, PDO::PARAM_STR, 200);
         $stmt->bindParam(':added', $added, PDO::PARAM_STR);
