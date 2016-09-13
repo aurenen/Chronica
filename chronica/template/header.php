@@ -11,12 +11,12 @@
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
-<h1 class="title center">Chronica Installation</h1>
+<h1 class="title center">Network Updates</h1>
 <div id="wrap">
     <div id="nav">
         <h3>Navigation</h3>
-        <a href="index.php"><?php is_current("index"); ?>Start</a>
-        <a href="create.php"><?php is_current("create"); ?>Install</a>
-        <a href="../index.php"><?php is_current("success"); ?>Return to main</a>
+        <a href="index.php"><?php is_current("index"); ?>Updates</a>
+        <a href="dash.php"><?php is_current("dash"); ?>Admin Dash</a>
+        <a href="http://shinshoku.net">Return to shinshoku.net</a>
     </div>
     <div id="content">
