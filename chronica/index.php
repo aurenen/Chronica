@@ -13,9 +13,14 @@
 
 require_once 'includes/connect.php';
 require_once 'includes/util.php';
+require_once 'includes/crud.php';
+
+$cat = is_numeric($_GET['cat']) ? intval($_GET['cat']) : "all";
+$entries = getEntriesForView($cat);
 
 include_once 'template/header.php'; 
+
+include 'view.php';
+
+include_once 'template/footer.php'; 
 ?>
-
-
-<?php include_once 'template/footer.php'; ?>
