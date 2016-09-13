@@ -1,23 +1,17 @@
-# Chronica
-A simple blog-like script, meant to categorize my site updates.
+*Note:* Not ready for public use. Download at your own risk.
 
-###file structure:
-* /include/
-    * admin.php
-    * auth.php
-    * config.php
-    * view.php
-* /install/
-    * create.sql
-    * index.php
-* /template/
-    * footer.php
-    * header.php
-    * style.css
-* add.php
-* category.php
-* edit.php
-* index.php
-* login.php
-* logout.php
-* setting.php
+# Chronica
+
+Chronica is a simple blogging script, best used for categorized updates. There's no extra flare like entry tagging and commenting, and it only uses markdown for content formatting.
+
+## Requirements
+
+You need a recent version of PHP and MySQL, preferably at least `PHP 5.3` and `MySQL 5.1`. You should have a database just for Chronica, and not mix other scripts' access in the same database to avoid table name conflicts (table prefix options may be available in future versions).
+
+## Installation
+
+1. Download the zip
+2. Extract locally
+3. Modify contents of `/includes/config.php`
+4. Upload to your desired location
+5. Open `/install/` from the web and follow instructions
