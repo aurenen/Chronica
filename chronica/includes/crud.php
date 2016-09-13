@@ -224,3 +224,29 @@ function editEntry($id, $title, $desc, $added, $modified, $published, $category,
 
     return $status;
 }
+
+function getEntriesForView($cat = 'all') {
+    global $db;
+    $query = "SELECT `entry_meta`.`ent_id`, `entry_meta`.`title`, `entry_meta`.`added`, 
+                `entry_meta`.`modified`, `entry_meta`.`published`, `entries`.`html`,
+                `categories`.`cat_id`, `categories`.`name`, `categories`.`permalink` FROM `entry_meta`
+              JOIN `entries` ON `entry_meta`.`ent_id` = `entries`.`ent_id`
+              JOIN `category_has_entry` ON `category_has_entry`.`ent_id` = `entries`.`ent_id`
+              JOIN `categories` ON `categories`.`cat_id` = `category_has_entry`.`cat_id` ";
+    if ($cat !== 'all')
+        $query .= "WHERE `category_has_entry`.`cat_id` = :category ";
+    $query .= "ORDER BY `entry_meta`.`added` DESC";
+    $stmt = $db->prepare($query);
+    try {
+        if ($cat !== 'all')
+            $stmt->bindParam(':category', $cat, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to get entry for edit. ' . $ex->getMessage());
+        $result = null;
+    }
+    
+    return $result;
+}
