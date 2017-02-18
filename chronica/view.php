@@ -15,10 +15,13 @@ if ($entries == null)
     exit();
 
 foreach ($entries as $e) {
-    echo "<div class=\"entry-wrap\">\n"
-        ."<h3>".$e['title']."</h3>\n"
-        ."<div class=\"entry-body\">".$e['html']."</div>\n"
-        ."<div class=\"entry-date\">Posted on: ".date('F jS, Y', strtotime($e['added']))."</div>\n"
-        ."<div class=\"entry-cat\">Filed under: <a href=\"index.php?cat=".$e['cat_id']."\">".$e['name']."</a></div>\n"
-        ."</div>\n\n";
+    $added_date = date('F jS, Y', strtotime($e['added']));
+    echo <<<EOT
+    <div class="entry-wrap">
+        <h3>{$e['title']}</h3>
+        <div class="entry-body">{$e['html']}</div>
+        <div class="entry-date">Posted on: {$added_date}</div>
+        <div class="entry-cat">Filed under: <a href="index.php?cat={$e['cat_id']}">{$e['name']}</a></div>
+    </div>
+EOT;
 }
