@@ -123,10 +123,6 @@ require_once 'includes/admin_header.php';
                 <input type="submit" name="publish" value="Publish">
                 <input type="submit" name="draft" value="Save Draft (hide)">
             </div>
-                <h4>HTML Output</h4>
-                <textarea id="html"></textarea>
-                <h4>Preview</h4>
-                <div id="preview"></div>
             </div>
         </form>
         <?php else: /* list view */?>
