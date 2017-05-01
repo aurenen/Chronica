@@ -105,10 +105,10 @@ function getCategory($id) {
 
 function addEntry($title, $desc, $added, $modified, $published, $category, $entry) {
     global $db;
-    $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
-              VALUES (:title, :description, :added, :modified, :published);";
-    $stmt = $db->prepare($query);
     try {
+        $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
+                  VALUES (:title, :description, :added, :modified, :published);";
+        $stmt = $db->prepare($query);
         $stmt->bindParam(':title', $title, PDO::PARAM_STR, 100);
         $stmt->bindParam(':description', $desc, PDO::PARAM_STR, 200);
         $stmt->bindParam(':added', $added, PDO::PARAM_STR);
@@ -119,20 +119,26 @@ function addEntry($title, $desc, $added, $modified, $published, $category, $entr
 
         $entry_id = $db->lastInsertId();
 
-        $query2 = "INSERT INTO `entries` (`ent_id`, `markdown`, `html`) VALUES (:id, :entry, :html);
-                   INSERT INTO `category_has_entry` (`cat_id`, `ent_id`)
-                   VALUES (:category, :id);";
+        $query2 = "INSERT INTO `entries` (`ent_id`, `markdown`, `html`) VALUES (:id, :entry, :html);";
+
         $stmt = $db->prepare($query2);
         $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
         $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
-        $stmt->bindParam(':category', $category, PDO::PARAM_INT);
 
         $Parsedown = new Parsedown();
         $html = $Parsedown->text($entry);
 
         $stmt->bindParam(':html', $html, PDO::PARAM_STR);
-
         $stmt->execute();
+
+        $query3 = "INSERT INTO `category_has_entry` (`cat_id`, `ent_id`)
+                   VALUES (:category, :id);";
+        $stmt = $db->prepare($query3);
+        $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
+        foreach ($category as $cat) {
+            $stmt->bindParam(':category', $cat, PDO::PARAM_INT);
+            $stmt->execute();
+        }
 
         $status = true;
     }
@@ -188,6 +194,24 @@ function getEntryForEdit($id) {
     return $result;
 }
 
+function getEntryCategories($id) {
+    global $db;
+    $query = "SELECT `cat_id` FROM `category_has_entry` WHERE `ent_id` = :id";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to get entry for edit. ' . $ex->getMessage());
+        $result = null;
+    }
+    
+    return $result;
+}
+
 function editEntry($id, $title, $desc, $added, $modified, $published, $category, $entry) {
     global $db;
     $query = "UPDATE `entry_meta` SET `title` = :title, `description` = :description, `added` = :added, 
@@ -206,7 +230,7 @@ function editEntry($id, $title, $desc, $added, $modified, $published, $category,
         $stmt->bindParam(':modified', $modified, PDO::PARAM_STR);
         $stmt->bindParam(':published', $published, PDO::PARAM_BOOL);
         $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
-        $stmt->bindParam(':category', $category, PDO::PARAM_INT);
+        $stmt->bindParam(':category', $category, PDO::PARAM_INT); // modify this for multiple categories
 
         $Parsedown = new Parsedown();
         $html = $Parsedown->text($entry);

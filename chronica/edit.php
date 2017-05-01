@@ -34,6 +34,7 @@ elseif ($action == "edit" && $ent_id == 0) {
 }
 else {
     $edit_entry = getEntryForEdit($ent_id);
+    $entry_cats = getEntryCategories($ent_id);
     $cats = getCategories();
     $current_date = date('Y-m-d H:i:s');
 }
@@ -41,12 +42,19 @@ else {
 $edit = true;
 $success = false;
 
-if (isset($_POST['publish'])) {
+if (isset($_POST['save_entry'])) {
     $p_id = $_POST['entry_id'];
     $p_title = strip_tags($_POST['title']);
     $p_date_added = $_POST['added'];
     $p_date_modified = $_POST['modifed'];
-    $p_category = is_numeric($_POST['category']) ? intval($_POST['category']) : 0;
+
+    if (preg_match("/[^\d\,]/", $_POST['category_array']) === 1) {
+        $p_category = 0;
+    }
+    else {
+        $p_category = explode(",", $_POST['category_array']);
+    }
+    
     $p_entry = strip_tags($_POST['entry']);
 
     $_SESSION['post_title'] = $p_title;
@@ -103,25 +111,26 @@ require_once 'includes/admin_header.php';
             </div>
             <div class="form-row">
                 <label>Category</label>
-                <select name="category">
-                    <option></option>
+                <select name="category" id="category" multiple>
                     <?php foreach ($cats as $c) {
                         echo '<option value="'.$c['cat_id'].'"';
-                        if ((!$edit ? $_SESSION['post_cat'] : $edit_entry['cat_id']) == $c['cat_id']) 
-                            echo ' selected';
+                        foreach ($entry_cats as $ec) {
+                            if ($ec['cat_id'] == $c['cat_id']) 
+                                echo ' selected';
+                        }
                         echo '>'
                             .$c['name']
                             ."</option>\n";
                     } ?>
                 </select>
+                <input type="hidden" name="category_array" id="category_list">
             </div>
             <div id="editor-wrap">
                 <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
                 <textarea id="md" name="entry"><?php echo !$edit ? $_SESSION['post_entry'] : $edit_entry['markdown']; ?></textarea>
             <div class="form-row">
                 <input type="hidden" name="entry_id" value="<?php echo $ent_id; ?>">
-                <input type="submit" name="publish" value="Publish">
-                <input type="submit" name="draft" value="Save Draft (hide)">
+                <input type="submit" name="save_entry" value="Save Entry">
             </div>
             </div>
         </form>

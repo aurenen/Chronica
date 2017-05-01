@@ -11,6 +11,7 @@
     <link href="css/style.css" rel="stylesheet">
     <link href="css/flatpickr.min.css" rel="stylesheet">
     <link href="css/simplemde.min.css" rel="stylesheet">
+    <link href="css/select2.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>

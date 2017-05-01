@@ -7,9 +7,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 <script src="js/flatpickr.min.js"></script>
 <script src="js/simplemde.min.js"></script>
+<script src="js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
       $(".date").flatpickr();
+      $('select').select2();
+
+      $('select#category').on('change', function() {
+        $('#category_list').val( $('#category').val() );
+      });
     });
 
     var simplemde = new SimpleMDE({

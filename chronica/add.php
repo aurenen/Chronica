@@ -30,11 +30,17 @@ $success = false;
 if (isset($_POST['publish'])) {
     $p_title = strip_tags($_POST['title']);
     $p_date = $_POST['added'];
-    $p_category = is_numeric($_POST['category']) ? intval($_POST['category']) : 0;
+
+    if (preg_match("/[^\d\,]/", $_POST['category_array']) === 1) {
+        $p_category = 0;
+    }
+    else {
+        $p_category = explode(",", $_POST['category_array']);
+    }
+    
     $p_entry = strip_tags($_POST['entry']);
 
     $_SESSION['post_title'] = $p_title;
-    $_SESSION['post_cat'] = $p_category;
     $_SESSION['post_entry'] = $p_entry;
 
     if (strlen($p_title) > 100) {
@@ -53,6 +59,8 @@ if (isset($_POST['publish'])) {
     // process post if no issues
     if ($add) {
         $success = addEntry($p_title, substr($p_entry, 0, 200), $p_date, $p_date, true, $p_category, $p_entry);
+        $_SESSION['post_title'] = "";
+        $_SESSION['post_entry'] = "";
     }
 }
 
@@ -75,8 +83,7 @@ require_once 'includes/admin_header.php';
             </div>
             <div class="form-row">
                 <label>Category</label>
-                <select name="category">
-                    <option></option>
+                <select name="category" id="category" multiple>
                     <?php foreach ($cats as $c) {
                         echo '<option value="'.$c['cat_id'].'"';
                         if ($_SESSION['post_cat'] == $c['cat_id']) 
@@ -86,6 +93,7 @@ require_once 'includes/admin_header.php';
                             ."</option>\n";
                     } ?>
                 </select>
+                <input type="hidden" name="category_array" id="category_list">
             </div>
             <div id="editor-wrap">
                 <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
