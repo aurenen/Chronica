@@ -214,15 +214,32 @@ function getEntryCategories($id) {
 
 function editEntry($id, $title, $desc, $added, $modified, $published, $category, $entry) {
     global $db;
-    $query = "UPDATE `entry_meta` SET `title` = :title, `description` = :description, `added` = :added, 
-                `modified` = :modified, `published` = :published 
-              WHERE `ent_id` = :id;
-              UPDATE `entries` SET `markdown` = :entry, `html` = :html
-              WHERE `ent_id` = :id;
-              UPDATE `category_has_entry` SET `cat_id` = :category
-              WHERE `ent_id` = :id;";
-    $stmt = $db->prepare($query);
     try {
+        // remove old categories, then add new ones
+        $remove_cats = "DELETE FROM `category_has_entry` WHERE `ent_id` = :id;";
+        $rc_stmt = $db->prepare($remove_cats);
+        $rc_stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $rc_stmt->execute();
+
+        $insert_cats = "INSERT INTO `category_has_entry` (`cat_id`, `ent_id`)
+                   VALUES (:category, :id);";
+        $ic_stmt = $db->prepare($insert_cats);
+        $ic_stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        foreach ($category as $cat) {
+            $ic_stmt->bindParam(':category', $cat, PDO::PARAM_INT);
+            $ic_stmt->execute();
+        }
+
+        // figure out why this fails
+        $query = "UPDATE `entry_meta` SET `title` = :title, `description` = :description, `added` = :added, 
+                    `modified` = :modified, `published` = :published 
+                  WHERE `ent_id` = :id;
+                  UPDATE `entries` SET `markdown` = :entry, `html` = :html
+                  WHERE `ent_id` = :id;
+                  UPDATE `category_has_entry` SET `cat_id` = :category
+                  WHERE `ent_id` = :id;";
+        $stmt = $db->prepare($query);
+
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':title', $title, PDO::PARAM_STR, 100);
         $stmt->bindParam(':description', $desc, PDO::PARAM_STR, 200);
@@ -230,8 +247,6 @@ function editEntry($id, $title, $desc, $added, $modified, $published, $category,
         $stmt->bindParam(':modified', $modified, PDO::PARAM_STR);
         $stmt->bindParam(':published', $published, PDO::PARAM_BOOL);
         $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
-        $stmt->bindParam(':category', $category, PDO::PARAM_INT); // modify this for multiple categories
-
         $Parsedown = new Parsedown();
         $html = $Parsedown->text($entry);
 

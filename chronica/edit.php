@@ -83,6 +83,11 @@ if (isset($_POST['save_entry'])) {
     // process post if no issues
     if ($edit && $p_id !== 0) {
         $success = editEntry($p_id, $p_title, substr($p_entry, 0, 200), $p_date_added, $p_date_modified, true, $p_category, $p_entry);
+        if ($success) 
+            header('Location: edit.php?action=edit&id='.$p_id.'&success=true');
+        else 
+            header('Location: edit.php?action=edit&id='.$p_id.'&success=false');
+        exit();
     }
 }
 
@@ -91,19 +96,21 @@ require_once 'includes/admin_header.php';
         <h2>Edit Entries</h2>
 
         <?php echo $entry_msg; 
-            if ($success)
+            if ($_GET['success'] == 'true')
                 echo '<div class="success">Entry successfully edited.</div>';
+            if ($_GET['success'] == 'false')
+                echo '<div class="warning">Failed to edit entry.</div>';
         ?>
 
         <?php if ($action == "edit"): /* edit view */ ?>
         <form action="edit.php" method="post">
             <div class="form-row">
                 <label>Title</label>
-                <input type="text" name="title" value="<?php echo !$edit ? $_SESSION['post_title'] : $edit_entry['title']; ?>">
+                <input type="text" name="title" value="<?php echo $edit_entry['title']; ?>">
             </div>
             <div class="form-row">
                 <label>Date Published</label>
-                <input type="text" name="added" class="date" data-default-date="<?php echo !$edit ? $_SESSION['post_date_added'] : $edit_entry['added']; ?>" data-enable-time="true" data-enable-seconds="true">
+                <input type="text" name="added" class="date" data-default-date="<?php echo $edit_entry['added']; ?>" data-enable-time="true" data-enable-seconds="true">
             </div>
             <div class="form-row">
                 <label>Date Modififed</label>
@@ -127,7 +134,7 @@ require_once 'includes/admin_header.php';
             </div>
             <div id="editor-wrap">
                 <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
-                <textarea id="md" name="entry"><?php echo !$edit ? $_SESSION['post_entry'] : $edit_entry['markdown']; ?></textarea>
+                <textarea id="md" name="entry"><?php echo $edit_entry['markdown']; ?></textarea>
             <div class="form-row">
                 <input type="hidden" name="entry_id" value="<?php echo $ent_id; ?>">
                 <input type="submit" name="save_entry" value="Save Entry">
