@@ -95,13 +95,12 @@ require_once 'includes/admin_header.php';
                 </select>
                 <input type="hidden" name="category_array" id="category_list">
             </div>
-            <div id="editor-wrap">
-                <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
-                <textarea id="md" name="entry"><?php echo $_SESSION['post_entry']; ?></textarea>
             <div class="form-row">
+                <div id="editor-wrap">
+                    <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
+                    <textarea id="md" name="entry"><?php echo $_SESSION['post_entry']; ?></textarea>
+                </div>
                 <input type="submit" name="publish" value="Publish">
-                <input type="submit" name="draft" value="Save Draft">
-            </div>
             </div>
         </form>
 

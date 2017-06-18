@@ -128,13 +128,13 @@ require_once 'includes/admin_header.php';
                 </select>
                 <input type="hidden" name="category_array" id="category_list">
             </div>
-            <div id="editor-wrap">
-                <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
-                <textarea id="md" name="entry"><?php echo $edit_entry['markdown']; ?></textarea>
             <div class="form-row">
+                <div id="editor-wrap">
+                    <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
+                    <textarea id="md" name="entry"><?php echo $edit_entry['markdown']; ?></textarea>
+                </div>
                 <input type="hidden" name="entry_id" value="<?php echo $ent_id; ?>">
                 <input type="submit" name="save_entry" value="Save Entry">
-            </div>
             </div>
         </form>
         <?php else: /* list view */?>
