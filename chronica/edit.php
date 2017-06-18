@@ -22,8 +22,9 @@ if (!isset($_SESSION['login'])) {
 } 
 
 $action = $_GET['action'] == "edit" ? "edit" : "list";
+$page_num = isset($_GET['page']) ? $_GET['page'] : 1;
 $ent_id = is_numeric($_GET['id']) ? intval($_GET['id']) : 0;
-$page_offset = 0; // TODO: implement pagination later
+$page_offset = $page_num - 1;
 $entry_msg = '';
 
 if ($action == "list") {
@@ -158,6 +159,19 @@ require_once 'includes/admin_header.php';
                     ."</tr>\n";
             } ?>
         </table>
+        
+        <?php 
+        $pages = entry_pagination();
+        echo '<div class="pagination">';
+        echo '<strong>Pages:</strong>';
+        foreach ($pages as $p) {
+            if ($page_num == $p)
+                echo '<span>'. $p .'</span>';
+            else 
+                echo '<a href="edit.php?page='. $p .'">'. $p .'</a>';
+        }
+        echo '</div>';
+        ?>
 
         <?php endif; ?>
 

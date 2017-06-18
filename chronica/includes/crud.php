@@ -150,6 +150,19 @@ function addEntry($title, $desc, $added, $modified, $published, $category, $entr
     return $status;
 }
 
+function entry_pagination() {
+    global $db;
+    $stmt = $db->prepare("SELECT `ent_id` FROM `entry_meta`;");
+    $stmt->execute();
+    $total = $stmt->rowCount();
+    $page_count = ceil($total / 10);
+    $pages = array();
+    for ($i=1; $i <= $page_count; $i++) { 
+        $pages[] = $i;
+    }
+    return $pages;
+}
+
 function getEntriesMeta($offset, $count) {
     global $db;
     $offset *= 2;
@@ -261,7 +274,7 @@ function editEntry($id, $title, $desc, $added, $modified, $published, $category,
     return $status;
 }
 
-function getEntriesForView($cat = 'all') {
+function getEntriesForView($cat = 'all', $offset, $count) {
     global $db;
     $query = "SELECT `entry_meta`.`ent_id`, `entry_meta`.`title`, `entry_meta`.`added`, 
                 `entry_meta`.`modified`, `entry_meta`.`published`, `entries`.`html`,
@@ -271,11 +284,14 @@ function getEntriesForView($cat = 'all') {
               JOIN `categories` ON `categories`.`cat_id` = `category_has_entry`.`cat_id` ";
     if ($cat !== 'all')
         $query .= "WHERE `category_has_entry`.`cat_id` = :category ";
-    $query .= "ORDER BY `entry_meta`.`added` DESC";
+    $query .= "ORDER BY `entry_meta`.`added` DESC 
+               LIMIT :offset, :count;";
     $stmt = $db->prepare($query);
     try {
         if ($cat !== 'all')
             $stmt->bindParam(':category', $cat, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindParam(':count', $count, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll();
     }

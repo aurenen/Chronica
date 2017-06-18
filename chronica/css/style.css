@@ -139,6 +139,14 @@ tr:nth-child(2n+2) {
     background-color: #e0e0e0;
 }
 
+.pagination {
+    margin-top: 15px;
+}
+.pagination a, .pagination span {
+    padding: 5px;
+    margin: 3px;
+}
+
 /*********************************************************
  *      FORM
  *********************************************************/

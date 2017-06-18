@@ -16,11 +16,24 @@ require_once 'includes/util.php';
 require_once 'includes/crud.php';
 
 $cat = is_numeric($_GET['cat']) ? intval($_GET['cat']) : "all";
-$entries = getEntriesForView($cat);
+$page_num = isset($_GET['p']) ? $_GET['p'] : 1;
+$page_offset = $page_num - 1;
+$entries = getEntriesForView($cat, $page_offset, 10);
 
 include_once 'template/header.php'; 
 
 include 'view.php';
+
+$pages = entry_pagination();
+echo '<div class="pagination">';
+echo '<strong>Pages:</strong>';
+foreach ($pages as $p) {
+    if ($page_num == $p)
+        echo '<span>'. $p .'</span>';
+    else 
+        echo '<a href="index.php?cat='. $cat .'&p='. $p .'">'. $p .'</a>';
+}
+echo '</div>';
 
 include_once 'template/footer.php'; 
 ?>
