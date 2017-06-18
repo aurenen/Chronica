@@ -230,13 +230,10 @@ function editEntry($id, $title, $desc, $added, $modified, $published, $category,
             $ic_stmt->execute();
         }
 
-        // figure out why this fails
         $query = "UPDATE `entry_meta` SET `title` = :title, `description` = :description, `added` = :added, 
                     `modified` = :modified, `published` = :published 
                   WHERE `ent_id` = :id;
                   UPDATE `entries` SET `markdown` = :entry, `html` = :html
-                  WHERE `ent_id` = :id;
-                  UPDATE `category_has_entry` SET `cat_id` = :category
                   WHERE `ent_id` = :id;";
         $stmt = $db->prepare($query);
 
