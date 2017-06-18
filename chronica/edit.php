@@ -57,11 +57,6 @@ if (isset($_POST['save_entry'])) {
     
     $p_entry = strip_tags($_POST['entry']);
 
-    $_SESSION['post_title'] = $p_title;
-    $_SESSION['post_date_added'] = $p_date_added;
-    $_SESSION['post_cat'] = $p_category;
-    $_SESSION['post_entry'] = $p_entry;
-
     if (strlen($p_title) > 100) {
         $entry_msg .= '<div class="warning">Entry title cannot be longer than 100 characters.</div>';
         $edit = false;
