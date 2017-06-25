@@ -302,3 +302,19 @@ function getEntriesForView($cat = 'all', $offset, $count) {
     
     return $result;
 }
+
+function getSettings($key) {
+    global $db;
+    $query = "SELECT `set_value`, `description` FROM `settings` WHERE `set_key` = :set_key;";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':set_key', $key, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to get settings. ' . $ex->getMessage());
+        $result = null;
+    }
+    return $result;
+}
