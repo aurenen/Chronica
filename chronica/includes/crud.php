@@ -21,6 +21,47 @@ $db = db_connect();
 include_once 'Parsedown.php';
 
 /**
+ * Functions for dashboard
+ */
+
+function getLastUpdate() {
+    global $db;
+    $query = "SELECT `modified` FROM `entry_meta` ORDER BY `modified` DESC LIMIT 1;";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to get last update date. ' . $ex->getMessage());
+        $result = null;
+    }
+
+    return $result;
+}
+
+function getCountStat($type = 'entry') {
+    global $db;
+    if ($type == 'category') {
+        $query = "SELECT COUNT(*) FROM `categories`;";
+    }
+    else {
+        $query = "SELECT COUNT(*) FROM `entry_meta`;";
+    }
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to get count. ' . $ex->getMessage());
+        $result = null;
+    }
+
+    return $result;
+}
+
+/**
  * Functions for category
  */
 
@@ -81,7 +122,7 @@ function getCategories() {
         $result = $stmt->fetchAll();
     }
     catch (Exception $ex) {
-        error_log(date('Y-m-d') . ' div class="warning">ERROR: failed to load categories. ' . $ex->getMessage());
+        error_log(date('Y-m-d') . ' ERROR: failed to load categories. ' . $ex->getMessage());
         $result = null;
     }
 
@@ -100,7 +141,7 @@ function getCategory($id) {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
     }
     catch (Exception $ex) {
-        error_log(date('Y-m-d') . ' div class="warning">ERROR: failed to load category. ' . $ex->getMessage());
+        error_log(date('Y-m-d') . ' ERROR: failed to load category. ' . $ex->getMessage());
         $result = null;
     }
 
