@@ -23,8 +23,15 @@ function poweredBy($type = 'full') {
         echo 'Powered by <a href="'.$url.'">Chronica</a>';
     else if ($type == 'link')
         echo '<a href="'.$url.'">Chronica</a>';
-    else
+    else if ($type == 'name')
         echo 'Chronica';
+}
+
+/**
+ * Prints the version number.
+ */
+function getVersion() {
+    echo 'v0.2.0';
 }
 
 /**
