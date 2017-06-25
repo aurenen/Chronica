@@ -20,6 +20,10 @@
 $db = db_connect();
 include_once 'Parsedown.php';
 
+/**
+ * Functions for category
+ */
+
 function addCategory($name, $permalink, $desc) {
     global $db;
     $query = "INSERT INTO `categories` (`name`, `permalink`, `description`) 
@@ -102,6 +106,10 @@ function getCategory($id) {
 
     return $result;
 }
+
+/**
+ * Functions for entry
+ */
 
 function addEntry($title, $desc, $added, $modified, $published, $category, $entry) {
     global $db;
@@ -296,12 +304,16 @@ function getEntriesForView($cat = 'all', $offset, $count) {
         $result = $stmt->fetchAll();
     }
     catch (Exception $ex) {
-        error_log(date('Y-m-d') . ' ERROR: failed to get entry for edit. ' . $ex->getMessage());
+        error_log(date('Y-m-d') . ' ERROR: failed to get entry for view. ' . $ex->getMessage());
         $result = null;
     }
     
     return $result;
 }
+
+/**
+ * Functions for settings
+ */
 
 function getSettings($key) {
     global $db;
