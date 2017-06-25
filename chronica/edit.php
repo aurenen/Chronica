@@ -151,7 +151,7 @@ require_once 'includes/admin_header.php';
             <?php foreach ($entries as $e) {
                 echo "<tr>\n"
                     ."<td>".date('Y-m-d H:i:s', strtotime($e['added']))."</td>\n"
-                    ."<td>".date('Y-m-d H:i:s', strtotime($e['modifed']))."</td>\n"
+                    ."<td>".date('Y-m-d H:i:s', strtotime($e['modified']))."</td>\n"
                     ."<td>".$e['title']."</td>\n"
                     ."<td>".$e['description']."</td>\n"
                     ."<td>".(($e['published'] == 1)?'Yes':'No')."</td>\n"
