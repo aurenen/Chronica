@@ -51,7 +51,7 @@ require_once 'includes/admin_header.php';
         ?>
         <form action="setting.php" method="post">
             <div class="form-row">
-                <label>Username</label>
+                <label title="<?php echo $username['description']; ?>">Username</label>
                 <input type="text" name="username" value="<?php echo $username['set_value']; ?>">
             </div>
             <div class="form-row">
@@ -63,27 +63,27 @@ require_once 'includes/admin_header.php';
                 <input type="text" name="password2" value="">
             </div>
             <div class="form-row">
-                <label>Email</label>
+                <label title="<?php echo $email['description']; ?>">Email</label>
                 <input type="text" name="email" value="<?php echo $email['set_value']; ?>">
             </div>
             <div class="form-row">
-                <label>Full Path</label>
+                <label title="<?php echo $full_path['description']; ?>">Full Path</label>
                 <input type="text" name="full_path" value="<?php echo $full_path['set_value']; ?>">
             </div>
             <div class="form-row">
-                <label>Full URL</label>
+                <label title="<?php echo $full_url['description']; ?>">Full URL</label>
                 <input type="text" name="full_url" value="<?php echo $full_url['set_value']; ?>">
             </div>
             <div class="form-row">
-                <label>Timezone Offset</label>
+                <label title="<?php echo $timezone['description']; ?>">Timezone Offset</label>
                 <input type="text" name="timezone" value="<?php echo $timezone['set_value']; ?>">
             </div>
             <div class="form-row">
-                <label>Site Name</label>
+                <label title="<?php echo $site_name['description']; ?>">Site Name</label>
                 <input type="text" name="site_name" value="<?php echo $site_name['set_value']; ?>">
             </div>
             <div class="form-row">
-                <label>Entry Format</label>
+                <label title="<?php echo $entry_format['description']; ?>">Entry Format</label>
                 <label class="radio"><input type="radio" name="entry_format" value="markdown"<?php if ($entry_format['set_value'] == "markdown") echo " checked"; ?>> Markdown</label>
                 <label class="radio"><input type="radio" name="entry_format" value="html"<?php if ($entry_format['set_value'] == "html") echo " checked"; ?>> HTML</label>
             </div>
