@@ -12,7 +12,7 @@
 
 /**
  * Prints credit text/link.
- * @param  string $type values [url|full|link]
+ * @param  string $type values [url|full|link|name]
  * @return void
  */
 function poweredBy($type = 'full') {
