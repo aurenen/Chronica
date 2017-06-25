@@ -23,7 +23,7 @@
         <a href="add.php"><?php is_current("add"); ?>Add Entry</a>
         <a href="edit.php"><?php is_current("edit"); ?>Edit Entry</a>
         <a href="category.php"><?php is_current("category"); ?>Categories</a>
-        <a href="setting.php"><?php is_current("setting"); ?>Settings</a>
+        <a href="settings.php"><?php is_current("settings"); ?>Settings</a>
         <?php endif; ?>
         <a href="index.php"><?php is_current("index"); ?>View Published</a>
 
