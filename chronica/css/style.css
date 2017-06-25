@@ -153,11 +153,14 @@ tr:nth-child(2n+2) {
 .form-row {
     margin: 1em 0;
 }
-label {
+label:not(.radio) {
     display: inline-block;
     width: 200px;
     font-weight: 700;
     padding: .5em 0;
+}
+label.radio {
+    margin-right: 10px;
 }
 input, select {
     display: inline-block;
@@ -184,6 +187,10 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #333;
     color: #eee;
+}
+input[type="radio"] {
+    width: auto;
+    margin-right: 5px;
 }
 select {
     height: 42px;

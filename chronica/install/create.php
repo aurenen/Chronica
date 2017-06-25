@@ -82,7 +82,8 @@ if ( (isset($_GET['tables']) && $_GET['tables'] === 'success') || isset($_POST['
             ('full_path', :full_path, 'The full path in your server where this is installed.'),
             ('full_url', :full_url, 'The full url where this is located.'),
             ('timezone_offset', :timezone, 'Your UTF timezone offset.'),
-            ('site_name', :site_name, 'The title of your blog.');");
+            ('site_name', :site_name, 'The title of your blog.'),
+            ('entry_format', 'markdown', 'Enter entry in Markdown or HTML.');");
 
         try {
             // process post request, insert info, redirect to success page.
