@@ -95,11 +95,11 @@ require_once 'includes/admin_header.php';
             </div>
             <div class="form-row">
                 <label>Password</label>
-                <input type="text" name="password" value="" placeholder="enter only if changing">
+                <input type="password" name="password" value="" placeholder="enter only if changing">
             </div>
             <div class="form-row">
                 <label>Password again</label>
-                <input type="text" name="password2" value="" placeholder="enter only if changing">
+                <input type="password" name="password2" value="" placeholder="enter only if changing">
             </div>
             <div class="form-row">
                 <label title="<?php echo $email['description']; ?>">Email</label>
