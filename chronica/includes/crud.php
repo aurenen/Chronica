@@ -371,3 +371,23 @@ function getSettings($key) {
     }
     return $result;
 }
+
+function editSettings($set) {
+    global $db;
+    $query = "UPDATE `settings` SET `set_value` = :set_value WHERE `set_key` = :set_key;";
+    $stmt = $db->prepare($query);
+    try {
+        foreach ($set as $key => $value) {
+            $stmt->bindParam(':set_value', $value, PDO::PARAM_STR);
+            $stmt->bindParam(':set_key', $key, PDO::PARAM_STR);
+            $stmt->execute();
+        }
+        $status = true;
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to edit settings. ' . $ex->getMessage());
+        $status = false;
+    }
+
+    return $status;
+}

@@ -13,6 +13,7 @@
 require_once 'includes/connect.php';
 require_once 'includes/util.php';
 require_once 'includes/crud.php';
+require_once 'includes/PasswordHash.php';
 
 session_start();
 
@@ -21,7 +22,6 @@ if (!isset($_SESSION['login'])) {
     exit();
 } 
 
-$success = false;
 // pull settings
 $username = getSettings("username");
 $email = getSettings("email");
@@ -34,6 +34,45 @@ $entry_format = getSettings("entry_format");
 // TODO: process settings
 if (isset($_POST['save'])) {
 
+    if ($_POST['password'] !== $_POST['password2']) {
+        $entry_msg .= '<div class="warning">Passwords do not match.</div>';
+        $setting = false;
+    }
+    if (strpos($_POST['full_url'], 'http') !== 0) {
+        $entry_msg .= '<div class="warning">Please make sure the full url begins with http:// or https://</div>';
+        $setting = false;
+    }
+
+    $settings = array();
+    if ($_POST['username'] !== $username)
+        $settings['username'] = $_POST['username'];
+    if ($_POST['email'] !== $email)
+        $settings['email'] = $_POST['email'];
+    if ($_POST['full_path'] !== $full_path)
+        $settings['full_path'] = $_POST['full_path'];
+    if ($_POST['full_url'] !== $full_url)
+        $settings['full_url'] = $_POST['full_url'];
+    if ($_POST['timezone'] !== $timezone)
+        $settings['timezone_offset'] = $_POST['timezone'];
+    if ($_POST['site_name'] !== $site_name)
+        $settings['site_name'] = $_POST['site_name'];
+    if ($_POST['entry_format'] !== $entry_format)
+        $settings['entry_format'] = $_POST['entry_format'];
+    // hash password before inserting into db
+    $hasher = new PasswordHash(8, FALSE);
+    $hash = $hasher->HashPassword( $_POST['password'] );
+    if (strlen($hash) < 20)
+        fail('Failed to hash new password');
+    unset($hasher);
+    $settings['password'] = $hash;
+    $setting = true;
+
+    // process post if no issues
+    if ($setting) {
+        $success = editSettings($settings);
+        if ($success)
+            header('Location: settings.php?success=true');
+    }
 }
 
 require_once 'includes/admin_header.php'; 
@@ -46,21 +85,21 @@ require_once 'includes/admin_header.php';
         </p>
 
         <?php echo $entry_msg; 
-            if ($success)
+            if ($_GET['success'] == true)
                 echo '<div class="success">Settings successfully updated.</div>';
         ?>
-        <form action="setting.php" method="post">
+        <form action="settings.php" method="post">
             <div class="form-row">
                 <label title="<?php echo $username['description']; ?>">Username</label>
                 <input type="text" name="username" value="<?php echo $username['set_value']; ?>">
             </div>
             <div class="form-row">
                 <label>Password</label>
-                <input type="text" name="password" value="">
+                <input type="text" name="password" value="" placeholder="enter only if changing">
             </div>
             <div class="form-row">
                 <label>Password again</label>
-                <input type="text" name="password2" value="">
+                <input type="text" name="password2" value="" placeholder="enter only if changing">
             </div>
             <div class="form-row">
                 <label title="<?php echo $email['description']; ?>">Email</label>
