@@ -155,6 +155,7 @@ require_once 'includes/admin_header.php';
                 <th></th>
             </tr>
             <?php foreach ($entries as $e) {
+                // TODO: better entry list display
                 echo "<tr>\n"
                     ."<td>".date('Y-m-d H:i:s', strtotime($e['added']))."</td>\n"
                     ."<td>".date('Y-m-d H:i:s', strtotime($e['modified']))."</td>\n"
