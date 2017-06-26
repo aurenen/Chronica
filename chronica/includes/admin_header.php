@@ -19,18 +19,18 @@
     <div id="nav">
         <h3>Navigation</h3>
         <?php if (isset($_SESSION['login'])): ?>
-        <a href="dash.php"><?php is_current("dash"); ?>Dashboard</a>
-        <a href="add.php"><?php is_current("add"); ?>Add Entry</a>
-        <a href="edit.php"><?php is_current("edit"); ?>Edit Entry</a>
-        <a href="category.php"><?php is_current("category"); ?>Categories</a>
-        <a href="settings.php"><?php is_current("settings"); ?>Settings</a>
+        <a href="dash.php"><?php if (is_current("dash")) echo "&rarr; "; ?>Dashboard</a>
+        <a href="add.php"><?php if (is_current("add")) echo "&rarr; "; ?>Add Entry</a>
+        <a href="edit.php"><?php if (is_current("edit")) echo "&rarr; "; ?>Edit Entry</a>
+        <a href="category.php"><?php if (is_current("category")) echo "&rarr; "; ?>Categories</a>
+        <a href="settings.php"><?php if (is_current("settings")) echo "&rarr; "; ?>Settings</a>
         <?php endif; ?>
-        <a href="index.php"><?php is_current("index"); ?>View Published</a>
+        <a href="index.php"><?php if (is_current("index")) echo "&rarr; "; ?>View Published</a>
 
         <?php if (!isset($_SESSION['login'])): ?>
-        <a href="login.php"><?php is_current("login"); ?>Login</a>
+        <a href="login.php"><?php if (is_current("login")) echo "&rarr; "; ?>Login</a>
         <?php else: ?>
-        <a href="logout.php"><?php is_current("logout"); ?>Logout</a>
+        <a href="logout.php"><?php if (is_current("logout")) echo "&rarr; "; ?>Logout</a>
         <?php endif; ?>
     </div>
     <div id="content">

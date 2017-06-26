@@ -58,9 +58,10 @@ function is_current($title) {
         $page = "index";
     }
 
-    if ($page === $title) {
-        echo "&rarr; ";
-    }
+    if ($page === $title)
+        return true;
+    else
+        return false;
 }
 
 // http://webcheatsheet.com/php/get_current_page_url.php

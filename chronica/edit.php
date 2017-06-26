@@ -21,6 +21,7 @@ if (!isset($_SESSION['login'])) {
     exit();
 } 
 
+$entry_format = is_markdown() ? 'markdown' : 'html';
 $action = $_GET['action'] == "edit" ? "edit" : "list";
 $page_num = isset($_GET['page']) ? $_GET['page'] : 1;
 $ent_id = is_numeric($_GET['id']) ? intval($_GET['id']) : 0;
@@ -30,7 +31,7 @@ $entry_msg = '';
 if ($action == "list") {
     $entries = getEntriesMeta($page_offset, 10);
 }
-elseif ($action == "edit" && $ent_id == 0) {
+else if ($action == "edit" && $ent_id == 0) {
     $entry_msg .= '<div class="warning">Invalid entry id.</div>';
 }
 else {
@@ -56,7 +57,7 @@ if (isset($_POST['save_entry'])) {
         $p_category = explode(",", $_POST['category_array']);
     }
     
-    $p_entry = strip_tags($_POST['entry']);
+    $p_entry = is_markdown() ? strip_tags($_POST['entry']) : $_POST['entry'];
 
     if (strlen($p_title) > 100) {
         $entry_msg .= '<div class="warning">Entry title cannot be longer than 100 characters.</div>';
@@ -78,7 +79,7 @@ if (isset($_POST['save_entry'])) {
 
     // process post if no issues
     if ($edit && $p_id !== 0) {
-        $success = editEntry($p_id, $p_title, substr($p_entry, 0, 200), $p_date_added, $p_date_modified, true, $p_category, $p_entry);
+        $success = editEntry($p_id, $p_title, strip_tags(substr($p_entry, 0, 200)), $p_date_added, $p_date_modified, true, $p_category, $p_entry, $entry_format);
         if ($success) 
             header('Location: edit.php?action=edit&id='.$p_id.'&success=true');
         else 
@@ -130,7 +131,12 @@ require_once 'includes/admin_header.php';
             </div>
             <div class="form-row">
                 <div id="editor-wrap">
-                    <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
+                    <h4>Entry 
+                        <?php if (is_markdown()): ?>
+                        (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)
+                    <?php else: ?>
+                        (HTML)
+                    <?php endif; ?></h4>
                     <textarea id="md" name="entry"><?php echo $edit_entry['markdown']; ?></textarea>
                 </div>
                 <input type="hidden" name="entry_id" value="<?php echo $ent_id; ?>">

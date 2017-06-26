@@ -152,7 +152,7 @@ function getCategory($id) {
  * Functions for entry
  */
 
-function addEntry($title, $desc, $added, $modified, $published, $category, $entry) {
+function addEntry($title, $desc, $added, $modified, $published, $category, $entry, $format) {
     global $db;
     try {
         $query = "INSERT INTO `entry_meta` (`title`, `description`, `added`, `modified`, `published`)
@@ -172,12 +172,18 @@ function addEntry($title, $desc, $added, $modified, $published, $category, $entr
 
         $stmt = $db->prepare($query2);
         $stmt->bindParam(':id', $entry_id, PDO::PARAM_INT);
-        $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
 
-        $Parsedown = new Parsedown();
-        $html = $Parsedown->text($entry);
+        if ($format == 'html') {
+            $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
+            $stmt->bindParam(':html', $entry, PDO::PARAM_STR);
+        }
+        else {
+            $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
+            $Parsedown = new Parsedown();
+            $html = $Parsedown->text($entry);
 
-        $stmt->bindParam(':html', $html, PDO::PARAM_STR);
+            $stmt->bindParam(':html', $html, PDO::PARAM_STR);
+        }
         $stmt->execute();
 
         $query3 = "INSERT INTO `category_has_entry` (`cat_id`, `ent_id`)
@@ -274,7 +280,7 @@ function getEntryCategories($id) {
     return $result;
 }
 
-function editEntry($id, $title, $desc, $added, $modified, $published, $category, $entry) {
+function editEntry($id, $title, $desc, $added, $modified, $published, $category, $entry, $format) {
     global $db;
     try {
         // remove old categories, then add new ones
@@ -305,11 +311,18 @@ function editEntry($id, $title, $desc, $added, $modified, $published, $category,
         $stmt->bindParam(':added', $added, PDO::PARAM_STR);
         $stmt->bindParam(':modified', $modified, PDO::PARAM_STR);
         $stmt->bindParam(':published', $published, PDO::PARAM_BOOL);
-        $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
-        $Parsedown = new Parsedown();
-        $html = $Parsedown->text($entry);
 
-        $stmt->bindParam(':html', $html, PDO::PARAM_STR);
+        if ($format == 'html') {
+            $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
+            $stmt->bindParam(':html', $entry, PDO::PARAM_STR);
+        }
+        else {
+            $stmt->bindParam(':entry', $entry, PDO::PARAM_STR);
+            $Parsedown = new Parsedown();
+            $html = $Parsedown->text($entry);
+
+            $stmt->bindParam(':html', $html, PDO::PARAM_STR);
+        }
 
         $stmt->execute();
 
@@ -390,4 +403,22 @@ function editSettings($set) {
     }
 
     return $status;
+}
+
+function is_markdown() {
+    global $db;
+    $query = "SELECT `set_value` FROM `settings` WHERE `set_key` = 'entry_format';";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetchColumn();
+        if ($result == 'markdown')
+            return true;
+        else
+            return false;
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to edit settings. ' . $ex->getMessage());
+        return false;
+    }
 }

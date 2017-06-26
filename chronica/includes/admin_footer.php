@@ -10,17 +10,19 @@
 <script src="js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
-      $(".date").flatpickr();
+      $('.date').flatpickr();
       $('select').select2();
 
+      $('#category_list').val( $('#category').val() );
       $('select#category').on('change', function() {
         $('#category_list').val( $('#category').val() );
       });
     });
 
+<?php if ((is_current("add") || is_current("edit")) && is_markdown()): ?>
     var simplemde = new SimpleMDE({
       autofocus: true,
-      element: $("#md")[0],
+      element: $('#md')[0],
       forceSync: true,
       indentWithTabs: false,
       promptURLs: true,
@@ -28,6 +30,7 @@
           codeSyntaxHighlighting: false,
       }
   });
+<?php endif; ?>
 </script>
 </body>
 </html>

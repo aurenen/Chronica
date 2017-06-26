@@ -21,6 +21,7 @@ if (!isset($_SESSION['login'])) {
     exit();
 } 
 
+$entry_format = is_markdown() ? 'markdown' : 'html';
 $cats = getCategories();
 $current_date = date('Y-m-d H:i:s');
 $entry_msg = '';
@@ -38,7 +39,7 @@ if (isset($_POST['publish'])) {
         $p_category = explode(",", $_POST['category_array']);
     }
     
-    $p_entry = strip_tags($_POST['entry']);
+    $p_entry = is_markdown() ? strip_tags($_POST['entry']) : $_POST['entry'];
 
     $_SESSION['post_title'] = $p_title;
     $_SESSION['post_entry'] = $p_entry;
@@ -58,7 +59,7 @@ if (isset($_POST['publish'])) {
 
     // process post if no issues
     if ($add) {
-        $success = addEntry($p_title, substr($p_entry, 0, 200), $p_date, $p_date, true, $p_category, $p_entry);
+        $success = addEntry($p_title, strip_tags(substr($p_entry, 0, 200)), $p_date, $p_date, true, $p_category, $p_entry, $entry_format);
         $_SESSION['post_title'] = "";
         $_SESSION['post_entry'] = "";
     }
@@ -97,7 +98,12 @@ require_once 'includes/admin_header.php';
             </div>
             <div class="form-row">
                 <div id="editor-wrap">
-                    <h4>Entry (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)</h4>
+                    <h4>Entry 
+                        <?php if (is_markdown()): ?>
+                        (<a href="https://daringfireball.net/projects/markdown/syntax" target="_blank">markdown syntax</a>)
+                    <?php else: ?>
+                        (HTML)
+                    <?php endif; ?></h4>
                     <textarea id="md" name="entry"><?php echo $_SESSION['post_entry']; ?></textarea>
                 </div>
                 <input type="submit" name="publish" value="Publish">
