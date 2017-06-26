@@ -18,7 +18,7 @@ foreach ($entries as $e) {
     $added_date = date('F jS, Y', strtotime($e['added']));
     echo <<<EOT
     <div class="entry-wrap">
-        <h3>{$e['title']}</h3>
+        <h2 class="entry-title">{$e['title']}</h2>
         <div class="entry-body">{$e['html']}</div>
         <div class="entry-date">Posted on: {$added_date}</div>
         <div class="entry-cat">Filed under: <a href="index.php?cat={$e['cat_id']}">{$e['name']}</a></div>
