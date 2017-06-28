@@ -31,7 +31,7 @@ if ( isset($_POST['add_cat']) ) {
     $_SESSION['cat_perma'] = htmlentities($_POST['cat_perma']);
     $_SESSION['cat_desc'] = htmlentities($_POST['cat_desc']);
 
-    if ( strlen($_POST['cat_name']) < 2 || strlen($_POST['cat_name']) > 25 || preg_match('/[^A-Za-z0-9\.\&\!\s]+/', $_POST['cat_name']) === 1) {
+    if ( strlen($_POST['cat_name']) < 2 || strlen($_POST['cat_name']) > 25 || preg_match('/[^A-Za-z0-9\.\&\!\'\/\:\s]+/', $_POST['cat_name']) === 1) {
         $add_msg .= '<div class="warning">Category name must be greater than 1 and less than 25 characters and contain no symbols.</div>';
         $add = false;
     }
