@@ -87,13 +87,13 @@ if ( (isset($_GET['tables']) && $_GET['tables'] === 'success') || isset($_POST['
 
         try {
             // process post request, insert info, redirect to success page.
-            $stmt->bindParam(':username', trim($_POST['username']), PDO::PARAM_STR, 25);
+            $stmt->bindParam(':username', $_POST['username'], PDO::PARAM_STR, 25);
             $stmt->bindParam(':password', $hash, PDO::PARAM_STR, 250);
-            $stmt->bindParam(':email', trim($_POST['email']), PDO::PARAM_STR, 100);
-            $stmt->bindParam(':full_path', trim($_POST['full_path']), PDO::PARAM_STR, 250);
-            $stmt->bindParam(':full_url', trim($_POST['full_url']), PDO::PARAM_STR, 250);
-            $stmt->bindParam(':timezone', trim($_POST['timezone']), PDO::PARAM_STR, 2);
-            $stmt->bindParam(':site_name', trim($_POST['site_name']), PDO::PARAM_STR, 250);
+            $stmt->bindParam(':email', $_POST['email'], PDO::PARAM_STR, 100);
+            $stmt->bindParam(':full_path', $_POST['full_path'], PDO::PARAM_STR, 250);
+            $stmt->bindParam(':full_url', $_POST['full_url'], PDO::PARAM_STR, 250);
+            $stmt->bindParam(':timezone', $_POST['timezone'], PDO::PARAM_STR, 2);
+            $stmt->bindParam(':site_name', $_POST['site_name'], PDO::PARAM_STR, 250);
 
             $stmt->execute();
         }
