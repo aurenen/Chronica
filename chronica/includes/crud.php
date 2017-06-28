@@ -241,11 +241,9 @@ function getEntriesMeta($offset, $count) {
 function getEntryForEdit($id) {
     global $db;
     $query = "SELECT `entry_meta`.`ent_id`, `entry_meta`.`title`, `entry_meta`.`added`, 
-                `entry_meta`.`modified`, `entry_meta`.`published`, `entries`.`markdown`,
-                `categories`.`cat_id`, `categories`.`name` FROM `entry_meta`
+                `entry_meta`.`modified`, `entry_meta`.`published`, `entries`.`markdown`
+              FROM `entry_meta`
               JOIN `entries` ON `entry_meta`.`ent_id` = `entries`.`ent_id`
-              JOIN `category_has_entry` ON `category_has_entry`.`ent_id` = `entries`.`ent_id`
-              JOIN `categories` ON `categories`.`cat_id` = `category_has_entry`.`cat_id`
               WHERE `entry_meta`.`ent_id` = :id";
     $stmt = $db->prepare($query);
     try {
