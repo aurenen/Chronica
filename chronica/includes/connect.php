@@ -29,6 +29,7 @@ function db_connect() {
         return $link;
     }
     catch (PDOException $ex) {
-        return 'Connection failed: ' . $ex->getMessage();
+        error_log(date('Y-m-d') . ' ERROR: Connection failed: ' . $ex->getMessage());
+        exit('ERROR: failed to connect to database. Check error log.');
     }
 }
