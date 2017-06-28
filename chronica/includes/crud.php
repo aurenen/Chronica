@@ -273,7 +273,7 @@ function getEntryCategories($id) {
         $result = $stmt->fetchAll();
     }
     catch (Exception $ex) {
-        error_log(date('Y-m-d') . ' ERROR: failed to get entry for edit. ' . $ex->getMessage());
+        error_log(date('Y-m-d') . ' ERROR: failed to get entry category. ' . $ex->getMessage());
         $result = null;
     }
     
@@ -338,12 +338,10 @@ function editEntry($id, $title, $desc, $added, $modified, $published, $category,
 
 function getEntriesForView($cat = 'all', $offset, $count) {
     global $db;
-    $query = "SELECT `entry_meta`.`ent_id`, `entry_meta`.`title`, `entry_meta`.`added`, 
-                `entry_meta`.`modified`, `entry_meta`.`published`, `entries`.`html`,
-                `categories`.`cat_id`, `categories`.`name`, `categories`.`permalink` FROM `entry_meta`
+    $query = "SELECT DISTINCT `entry_meta`.`ent_id`, `entry_meta`.`title`, `entry_meta`.`added`, 
+                `entry_meta`.`modified`, `entry_meta`.`published`, `entries`.`html` FROM `entry_meta`
               JOIN `entries` ON `entry_meta`.`ent_id` = `entries`.`ent_id`
-              JOIN `category_has_entry` ON `category_has_entry`.`ent_id` = `entries`.`ent_id`
-              JOIN `categories` ON `categories`.`cat_id` = `category_has_entry`.`cat_id` ";
+              JOIN `category_has_entry` ON `category_has_entry`.`ent_id` = `entries`.`ent_id` ";
     if ($cat !== 'all')
         $query .= "WHERE `category_has_entry`.`cat_id` = :category ";
     $query .= "ORDER BY `entry_meta`.`added` DESC 
@@ -359,6 +357,28 @@ function getEntriesForView($cat = 'all', $offset, $count) {
     }
     catch (Exception $ex) {
         error_log(date('Y-m-d') . ' ERROR: failed to get entry for view. ' . $ex->getMessage());
+        $result = null;
+    }
+    
+    return $result;
+}
+
+function getEntryCategoriesForView($id) {
+    if (!is_numeric($id))
+        return null;
+    global $db;
+    $query = "SELECT `categories`.`cat_id`, `categories`.`name`, `categories`.`permalink` 
+              FROM `category_has_entry` JOIN `categories` ON `categories`.`cat_id` = `category_has_entry`.`cat_id` 
+              WHERE `category_has_entry`.`ent_id` = :id";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to get entry category. ' . $ex->getMessage());
         $result = null;
     }
     
