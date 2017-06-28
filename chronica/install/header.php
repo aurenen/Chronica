@@ -15,8 +15,8 @@
 <div id="wrap">
     <div id="nav">
         <h3>Navigation</h3>
-        <a href="index.php"><?php is_current("index"); ?>Start</a>
-        <a href="create.php"><?php is_current("create"); ?>Install</a>
-        <a href="../index.php"><?php is_current("success"); ?>Return to main</a>
+        <a href="index.php"><?php if (is_current("index")) echo "&rarr; "; ?>Start</a>
+        <a href="create.php"><?php if (is_current("create")) echo "&rarr; "; ?>Install</a>
+        <a href="../index.php"><?php if (is_current("success")) echo "&rarr; "; ?>Return to main</a>
     </div>
     <div id="content">
