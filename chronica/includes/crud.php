@@ -200,17 +200,27 @@ function addEntry($title, $desc, $added, $modified, $published, $category, $entr
     return $status;
 }
 
-function entry_pagination() {
+function entry_pagination($cat = 'all') {
     global $db;
-    $stmt = $db->prepare("SELECT `ent_id` FROM `entry_meta`;");
-    $stmt->execute();
-    $total = $stmt->rowCount();
-    $page_count = ceil($total / 10);
-    $pages = array();
-    for ($i=1; $i <= $page_count; $i++) { 
-        $pages[] = $i;
+    $query = "SELECT DISTINCT `entry_meta`.`ent_id` FROM `entry_meta` ";
+    if ($cat !== 'all')
+        $query .= "JOIN `category_has_entry` ON `category_has_entry`.`ent_id` = `entry_meta`.`ent_id` WHERE `category_has_entry`.`cat_id` = :category ";
+    try {
+        $stmt = $db->prepare($query);
+        if ($cat !== 'all')
+            $stmt->bindParam(':category', $cat, PDO::PARAM_INT);
+        $stmt->execute();
+        $total = $stmt->rowCount();
+        $page_count = ceil($total / 10);
+        $pages = array();
+        for ($i=1; $i <= $page_count; $i++) { 
+            $pages[] = $i;
+        }
+        return $pages;
     }
-    return $pages;
+    catch (Exception $ex) {
+        error_log(date('Y-m-d') . ' ERROR: failed to pagination. ' . $ex->getMessage());
+    }
 }
 
 function getEntriesMeta($offset, $count) {

@@ -24,7 +24,7 @@ include_once 'template/header.php';
 
 include 'view.php';
 
-$pages = entry_pagination();
+$pages = entry_pagination($cat);
 echo '<div class="pagination">';
 echo '<strong>Pages: </strong>';
 foreach ($pages as $p) {
