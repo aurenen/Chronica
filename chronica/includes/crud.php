@@ -220,8 +220,9 @@ function entry_pagination() {
 
 function getEntriesMeta($offset, $count) {
     global $db;
-    $offset *= 2;
-    $query = "SELECT `ent_id`, `title`, `description`, `added`, `modified`, `published` FROM `entry_meta` LIMIT :offset, :count;";
+    $offset *= $count;
+    $query = "SELECT `ent_id`, `title`, `description`, `added`, `modified`, `published` 
+              FROM `entry_meta` ORDER BY `added` DESC LIMIT :offset, :count;";
     $stmt = $db->prepare($query);
     try {
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
@@ -336,6 +337,7 @@ function editEntry($id, $title, $desc, $added, $modified, $published, $category,
 
 function getEntriesForView($cat = 'all', $offset, $count) {
     global $db;
+    $offset *= $count;
     $query = "SELECT DISTINCT `entry_meta`.`ent_id`, `entry_meta`.`title`, `entry_meta`.`added`, 
                 `entry_meta`.`modified`, `entry_meta`.`published`, `entries`.`html` FROM `entry_meta`
               JOIN `entries` ON `entry_meta`.`ent_id` = `entries`.`ent_id`
