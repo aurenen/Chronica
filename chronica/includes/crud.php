@@ -10,12 +10,7 @@
  * 
  ************************************************************/
 
-/**
- * adds a new category
- * @param string $name      category name
- * @param string $permalink category permalink slug
- * @param string $desc      category description
- */
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 $db = db_connect();
 include_once 'Parsedown.php';
