@@ -31,7 +31,7 @@ function poweredBy($type = 'full') {
  * Prints the version number.
  */
 function getVersion() {
-    echo 'v0.2.0';
+    echo 'v0.2.3';
 }
 
 /**
