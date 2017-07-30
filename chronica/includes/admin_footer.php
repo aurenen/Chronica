@@ -1,7 +1,7 @@
     </div>
 </div>
 <div id="footer">
-    <p>&copy; <?php poweredBy('link'); ?> 2016.</p>
+    <p>&copy; <?php poweredBy('link'); echo " "; $y="2016"; echo (date('Y')==$y)?($y):($y."-".date('Y')); ?>.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>

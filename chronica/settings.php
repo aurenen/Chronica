@@ -34,8 +34,14 @@ $entry_format = getSettings("entry_format");
 // TODO: process settings
 if (isset($_POST['save'])) {
 
+    $setting = true;
+    
     if ($_POST['password'] !== $_POST['password2']) {
         $entry_msg .= '<div class="warning">Passwords do not match.</div>';
+        $setting = false;
+    }
+    if (strlen($_POST['password']) > 0 && strlen($_POST['password']) < 8) {
+        $entry_msg .= '<div class="warning">Password must be at least 8 characters.</div>';
         $setting = false;
     }
     if (strpos($_POST['full_url'], 'http') !== 0) {
@@ -58,14 +64,16 @@ if (isset($_POST['save'])) {
         $settings['site_name'] = $_POST['site_name'];
     if ($_POST['entry_format'] !== $entry_format)
         $settings['entry_format'] = $_POST['entry_format'];
-    // hash password before inserting into db
-    $hasher = new PasswordHash(8, FALSE);
-    $hash = $hasher->HashPassword( $_POST['password'] );
-    if (strlen($hash) < 20)
-        fail('Failed to hash new password');
-    unset($hasher);
-    $settings['password'] = $hash;
-    $setting = true;
+
+    if (strlen($_POST['password']) > 0) {
+        // hash password before inserting into db
+        $hasher = new PasswordHash(8, FALSE);
+        $hash = $hasher->HashPassword( $_POST['password'] );
+        if (strlen($hash) < 20)
+            fail('Failed to hash new password');
+        unset($hasher);
+        $settings['password'] = $hash;
+    }
 
     // process post if no issues
     if ($setting) {
