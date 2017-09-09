@@ -10,12 +10,16 @@
  * 
  ************************************************************/
 
+require_once 'config.php';
 /**
  * Connects to MySQL database through PDO
  * @return PDO connection link
  */
 function db_connect() {
-    require_once 'config.php';
+    global $db_user;
+    global $db_pass;
+    global $db_name;
+    global $db_host;
 
     $dsn = 'mysql:host=' . $db_host . ';dbname=' . $db_name . ';charset=utf8';
 
