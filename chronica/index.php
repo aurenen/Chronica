@@ -26,7 +26,8 @@ include 'view.php';
 
 $pages = entry_pagination($cat);
 echo '<div class="pagination">';
-echo '<strong>Pages: </strong>';
+if (count($pages) > 0)
+    echo '<strong>Pages: </strong>';
 foreach ($pages as $p) {
     if ($page_num == $p)
         echo '<span>'. $p .'</span>';

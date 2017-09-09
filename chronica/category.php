@@ -45,8 +45,16 @@ if ( isset($_POST['add_cat']) ) {
     }
 
     if ($add) {
+        $_SESSION['cat_name'] = "";
+        $_SESSION['cat_perma'] = "";
+        $_SESSION['cat_desc'] = "";
         $added = addCategory($_POST['cat_name'], $_POST['cat_perma'], $_POST['cat_desc']);
     }
+    if ($added) 
+        header('Location: category.php?success=true');
+    else 
+        header('Location: category.php?success=false');
+    exit();
 }
 
 require_once 'includes/admin_header.php'; 
@@ -74,13 +82,11 @@ require_once 'includes/admin_header.php';
 
         <h3>Add Category</h3>
         <?php echo $add_msg; 
-            if (isset($_POST['add_cat'])) {
-                if ($added) {
-                    echo '<div class="success">Category successfully added.</div>';
-                }
-                else {
-                    echo '<div class="warning">ERROR: failed to add category.</div>';
-                }
+            if ($_GET['success'] == 'true') {
+                echo '<div class="success">Category successfully added.</div>';
+            }
+            if ($_GET['success'] == 'false') {
+                echo '<div class="warning">ERROR: failed to add category.</div>';
             }
         ?>
         <p>Category name should avoid symbols and category permalink is the unique slug for your category, example: http://update.com/category/<strong>permalink</strong>, it is NOT the entire url, just the unique part you want to use to link.</p>

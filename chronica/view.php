@@ -11,19 +11,21 @@
  * 
  ************************************************************/
 
-if ($entries == null)
-    exit();
+if ($entries == null) {
+    echo "<p>No entries to display.</p>";
+}
 
-foreach ($entries as $e) {
-    $entry_cats = getEntryCategoriesForView($e['ent_id']);
-    $added_date = date('F jS, Y', strtotime($e['added']));
-echo <<<EOT
+else {
+    foreach ($entries as $e) {
+        $entry_cats = getEntryCategoriesForView($e['ent_id']);
+        $added_date = date('F jS, Y', strtotime($e['added']));
+        echo <<<EOT
 
-    <div class="entry-wrap">
-        <h2 class="entry-title">{$e['title']}</h2>
-        <div class="entry-body">{$e['html']}</div>
-        <div class="entry-date">Posted on: {$added_date}</div>
-        <div class="entry-cat">Filed under: 
+        <div class="entry-wrap">
+            <h2 class="entry-title">{$e['title']}</h2>
+            <div class="entry-body">{$e['html']}</div>
+            <div class="entry-date">Posted on: {$added_date}</div>
+            <div class="entry-cat">Filed under: 
 EOT;
         $cat_count = count($entry_cats);
         for ($i=0;$i<$cat_count;$i++) {
@@ -32,9 +34,11 @@ EOT;
             else
                 echo '<a href="index.php?cat='.$entry_cats[$i]['cat_id'].'">'.$entry_cats[$i]['name'].'</a>';
         }
-echo <<<EOT
+    echo <<<EOT
 
         </div> <!-- end .entry-cat -->
     </div> <!-- end .entry-wrap -->
 EOT;
+
+    }
 }
