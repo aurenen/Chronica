@@ -13,7 +13,7 @@
 require_once 'includes/connect.php';
 require_once 'includes/util.php';
 require_once 'includes/crud.php';
-require_once 'includes/PasswordHash.php';
+// require_once 'includes/PasswordHash.php';
 
 session_start();
 
@@ -67,11 +67,9 @@ if (isset($_POST['save'])) {
 
     if (strlen($_POST['password']) > 0) {
         // hash password before inserting into db
-        $hasher = new PasswordHash(8, FALSE);
-        $hash = $hasher->HashPassword( $_POST['password'] );
-        if (strlen($hash) < 20)
+        $hash = password_hash($_POST['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+        if (!$hash) 
             fail('Failed to hash new password');
-        unset($hasher);
         $settings['password'] = $hash;
     }
 

@@ -31,12 +31,10 @@ function verifyUser($user, $pass) {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // hash password before checking with db
-        $hasher = new PasswordHash(8, FALSE);
-        // if match, result[user] == 'username' and result[pass] == 'password'
-        if (strcmp($user, $result['user']) === 0 && $hasher->CheckPassword($pass, $result['pass'])) {
+        if (strcmp($user, $result['user']) === 0 && password_verify($pass, $result['pass'])) {
             $verify = true;
         }
-        unset($hasher);
+        // unset($hasher);
     }
     catch (Exception $ex) {
         echo $ex->getMessage();

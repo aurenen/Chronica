@@ -14,7 +14,6 @@
 
 require_once '../includes/connect.php';
 require_once '../includes/util.php';
-require_once '../includes/PasswordHash.php';
 
 $db = db_connect();
 $done = true;
@@ -69,11 +68,9 @@ if ( (isset($_GET['tables']) && $_GET['tables'] === 'success') || isset($_POST['
     if ($done && !isset($_GET['install'])) {
 
         // hash password before inserting into db
-        $hasher = new PasswordHash(8, FALSE);
-        $hash = $hasher->HashPassword( $_POST['password'] );
-        if (strlen($hash) < 20)
+        $hash = password_hash($_POST['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+        if (!$hash) 
             fail('Failed to hash new password');
-        unset($hasher);
 
         $stmt = $db->prepare("INSERT INTO `settings` (`set_key`, `set_value`, `description`) VALUES 
             ('username', :username, 'Your login username.'),
