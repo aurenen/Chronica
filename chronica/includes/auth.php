@@ -34,7 +34,6 @@ function verifyUser($user, $pass) {
         if (strcmp($user, $result['user']) === 0 && password_verify($pass, $result['pass'])) {
             $verify = true;
         }
-        // unset($hasher);
     }
     catch (Exception $ex) {
         echo $ex->getMessage();
